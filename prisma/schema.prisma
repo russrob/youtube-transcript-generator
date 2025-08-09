@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  videos Video[]
+
+  @@map("users")
+}
+
+model Video {
+  id          String   @id @default(cuid())
+  youtubeId   String   @unique
+  title       String
+  description String?
+  duration    Int?     // in seconds
+  thumbnailUrl String?
+  channelName String?
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Foreign keys
+  userId      String
+  
+  // Relations
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transcript  Transcript?
+  scripts     Script[]
+
+  @@map("videos")
+}
+
+model Transcript {
+  id        String   @id @default(cuid())
+  content   String   // JSON string of transcript segments
+  language  String   @default("en")
+  duration  Int?     // in seconds
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Foreign keys
+  videoId   String   @unique
+  
+  // Relations
+  video     Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  scripts   Script[]
+
+  @@map("transcripts")
+}
+
+model Script {
+  id           String      @id @default(cuid())
+  title        String
+  content      String
+  style        ScriptStyle @default(PROFESSIONAL)
+  durationMin  Int         @default(5) // target duration in minutes
+  audience     String      @default("general")
+  options      String?     // JSON string for additional options
+  status       ScriptStatus @default(DRAFT)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  
+  // Foreign keys
+  videoId      String
+  transcriptId String?
+  
+  // Relations
+  video        Video       @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  transcript   Transcript? @relation(fields: [transcriptId], references: [id], onDelete: SetNull)
+
+  @@map("scripts")
+}
+
+enum ScriptStyle {
+  PROFESSIONAL
+  CASUAL
+  EDUCATIONAL
+  ENTERTAINING
+  TECHNICAL
+  STORYTELLING
+}
+
+enum ScriptStatus {
+  DRAFT
+  GENERATING
+  COMPLETED
+  ERROR
+}
