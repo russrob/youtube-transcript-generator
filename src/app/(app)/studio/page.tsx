@@ -1,15 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/auth";
+import { useUser } from '@clerk/nextjs';
 import type { Video, Transcript, Script, TranscriptFetchResponse, ScriptStyle } from "@/lib/types";
 
 export default function StudioPage() {
+  const { user, isLoaded } = useUser();
   const [currentVideo, setCurrentVideo] = useState<Video | null>(null);
   const [transcript, setTranscript] = useState<Transcript | null>(null);
   const [scripts, setScripts] = useState<Script[]>([]);
-  const [userId, setUserId] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(true);
   const [urlInput, setUrlInput] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,41 +20,15 @@ export default function StudioPage() {
   const [duration, setDuration] = useState(5);
   const [audience, setAudience] = useState("general");
 
-  // Initialize user session with Supabase auth
-  useEffect(() => {
-    async function initializeAuth() {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (session?.user) {
-          setUserId(session.user.id);
-        } else {
-          // Use anonymous auth for demo
-          const { data, error } = await supabase.auth.signInAnonymously();
-          if (data.user) {
-            setUserId(data.user.id);
-          } else if (error) {
-            console.error('Authentication error:', error.message);
-            // Fallback to demo user
-            setUserId('demo-user-' + Date.now());
-          }
-        }
-      } catch (error) {
-        console.error('Session initialization error:', error);
-        // Fallback to demo user
-        setUserId('demo-user-' + Date.now());
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    initializeAuth();
-  }, []);
-
   // Fetch transcript from YouTube
   const handleFetchTranscript = async () => {
     if (!urlInput.trim()) {
       setError("Please enter a YouTube URL");
+      return;
+    }
+
+    if (!user?.id) {
+      setError("Please sign in to use this feature");
       return;
     }
 
@@ -70,7 +43,7 @@ export default function StudioPage() {
         },
         body: JSON.stringify({
           url: urlInput,
-          userId: userId,
+          userId: user.id,
           language: 'en'
         })
       });
@@ -182,21 +155,21 @@ export default function StudioPage() {
     }
   };
 
-  if (isLoading) {
+  if (!isLoaded) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Initializing Studio...</p>
+          <p className="mt-4 text-gray-600">Loading Studio...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+    <>
+      {/* Studio Header */}
+      <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
@@ -214,7 +187,7 @@ export default function StudioPage() {
             )}
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Error Display */}
       {error && (
@@ -472,6 +445,6 @@ export default function StudioPage() {
           </div>
         </div>
       </main>
-    </div>
+    </>
   );
 }

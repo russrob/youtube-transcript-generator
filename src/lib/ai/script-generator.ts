@@ -243,7 +243,11 @@ function getStyleInstructions(style: ScriptStyle): string {
     EDUCATIONAL: 'Clear explanations, step-by-step approach, emphasis on learning outcomes',
     ENTERTAINING: 'Engaging, humorous, with storytelling elements and personality',
     TECHNICAL: 'Detailed, precise, with proper terminology and comprehensive coverage',
-    STORYTELLING: 'Narrative structure with compelling story arc and emotional engagement'
+    STORYTELLING: 'Narrative structure with compelling story arc and emotional engagement',
+    // Pro-only styles
+    PERSUASIVE: 'Compelling, influential tone designed to convince and motivate action with strong arguments and emotional appeals',
+    NARRATIVE: 'Rich storytelling with character development, plot structure, and immersive world-building elements',
+    ACADEMIC: 'Scholarly tone with rigorous analysis, citations, theoretical frameworks, and research-backed conclusions'
   };
   
   return styleMap[style] || styleMap.PROFESSIONAL;

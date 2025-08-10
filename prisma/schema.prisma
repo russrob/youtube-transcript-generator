@@ -14,8 +14,22 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Subscription fields
+  subscriptionTier    SubscriptionTier @default(FREE)
+  subscriptionStatus  SubscriptionStatus @default(ACTIVE)
+  subscriptionStart   DateTime?
+  subscriptionEnd     DateTime?
+  stripeCustomerId    String?
+  stripeSubscriptionId String?
+
+  // Usage tracking
+  monthlyScriptCount   Int @default(0)
+  totalScriptCount     Int @default(0)
+  lastUsageReset       DateTime @default(now())
+
   // Relations
   videos Video[]
+  usageLogs UsageLog[]
 
   @@map("users")
 }
@@ -73,6 +87,11 @@ model Script {
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   
+  // Premium features
+  isPriority   Boolean     @default(false) // Priority queue processing
+  hasWatermark Boolean     @default(true)  // Watermark for free users
+  processingTimeMs Int?     // Track generation time for analytics
+  
   // Foreign keys
   videoId      String
   transcriptId String?
@@ -91,6 +110,10 @@ enum ScriptStyle {
   ENTERTAINING
   TECHNICAL
   STORYTELLING
+  // Pro-only styles
+  PERSUASIVE
+  NARRATIVE
+  ACADEMIC
 }
 
 enum ScriptStatus {
@@ -98,4 +121,36 @@ enum ScriptStatus {
   GENERATING
   COMPLETED
   ERROR
+}
+
+enum SubscriptionTier {
+  FREE
+  PRO
+  BUSINESS
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+  TRIALING
+  UNPAID
+}
+
+model UsageLog {
+  id        String   @id @default(cuid())
+  action    String   // "script_generated", "video_processed", etc.
+  metadata  String?  // JSON for additional data
+  createdAt DateTime @default(now())
+  
+  // Foreign keys
+  userId    String
+  
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("usage_logs")
 }
