@@ -1,5 +1,4 @@
 import { requireUser } from '@/lib/auth/require-user';
-import { AppHeader } from '@/components/ui/AppHeader';
 import { getUserSubscription, getSubscriptionLimits } from '@/lib/subscription/subscription-service';
 import { UsageLimits } from '@/components/ui/UsageLimits';
 import { UpgradeButton } from '@/components/stripe/UpgradeButton';
@@ -8,26 +7,32 @@ import { SubscriptionTier } from '@prisma/client';
 const tierFeatures = {
   FREE: [
     '2 scripts per month',
-    'Basic script styles',
+    'Basic script styles (6 styles)',
+    'Click confirmation',
     'Standard processing',
     'Community support',
     'Watermarked scripts'
   ],
   PRO: [
     '50 scripts per month',
-    'All script styles including Pro styles',
+    '✨ Hook generation (3-5 variants)',
+    '✨ Title & thumbnail pack (5+3)',
+    '✨ Advanced styles (Persuasive, Narrative, Academic)',
+    '✨ CTA integration & relink outros',
+    '✨ Payout structure & mini re-hooks',
     'Priority processing',
-    'Email support',
     'Watermark-free scripts',
+    'Email support',
     'API access'
   ],
   BUSINESS: [
     '200 scripts per month',
     'All Pro features',
     'Team collaboration (5 members)',
-    'Priority support',
     'Advanced analytics',
-    'Custom integrations'
+    'Priority support',
+    'Custom integrations',
+    'Bulk script generation'
   ],
   ENTERPRISE: [
     'Unlimited scripts',
@@ -35,7 +40,8 @@ const tierFeatures = {
     'Unlimited team members',
     'Dedicated support',
     'Custom training',
-    'White-label options'
+    'White-label options',
+    'Custom AI models'
   ]
 };
 
@@ -56,14 +62,13 @@ export default async function SubscriptionPage() {
     console.error('Failed to get subscription:', error);
     // Return a fallback page or redirect
     return (
-      <div className="min-h-screen bg-gray-50">
-        <AppHeader />
+      <>
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
             <p className="text-red-700">Unable to load subscription information. Please try again.</p>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -71,8 +76,7 @@ export default async function SubscriptionPage() {
   const currentLimits = getSubscriptionLimits(currentTier);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AppHeader />
+    <>
       
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
@@ -243,26 +247,38 @@ export default async function SubscriptionPage() {
               </p>
             </div>
             <div>
-              <h3 className="font-medium text-gray-900 mb-2">Can I change plans anytime?</h3>
+              <h3 className="font-medium text-gray-900 mb-2">What is hook generation?</h3>
               <p className="text-sm text-gray-600">
-                Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately with prorated billing.
+                Pro users get 3-5 different opening hook options (questions, bold statements, context drops) to maximize video retention from the first seconds.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-900 mb-2">What's in the title & thumbnail pack?</h3>
+              <p className="text-sm text-gray-600">
+                Get 5 high-clickability title alternatives and 3 thumbnail concept ideas with visual elements and contrast types to boost your video performance.
               </p>
             </div>
             <div>
               <h3 className="font-medium text-gray-900 mb-2">What are Pro-only script styles?</h3>
               <p className="text-sm text-gray-600">
-                Persuasive, Narrative, and Academic styles use advanced AI techniques and are available to Pro subscribers and above.
+                Persuasive (influence & convince), Narrative (rich storytelling), and Academic (scholarly analysis) styles use advanced AI techniques.
               </p>
             </div>
             <div>
-              <h3 className="font-medium text-gray-900 mb-2">How does priority processing work?</h3>
+              <h3 className="font-medium text-gray-900 mb-2">How does the payout structure work?</h3>
               <p className="text-sm text-gray-600">
-                Pro and above subscribers get their scripts generated faster through our priority queue system.
+                Pro scripts end each section with valuable insights and include mini re-hooks between sections to prevent viewer drop-off and maximize watch time.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-900 mb-2">What is CTA integration?</h3>
+              <p className="text-sm text-gray-600">
+                Seamlessly integrate calls-to-action (subscribe, newsletter, products) into your script flow naturally, plus automated relink outros to your next video.
               </p>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

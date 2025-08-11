@@ -1,13 +1,11 @@
 import { requireUser } from '@/lib/auth/require-user';
-import { AppHeader } from '@/components/ui/AppHeader';
 import { UserProfile } from '@clerk/nextjs';
 
 export default async function SettingsPage() {
   const { clerkUser, dbUser } = await requireUser();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AppHeader />
+    <>
       
       <div className="max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
@@ -97,6 +95,6 @@ export default async function SettingsPage() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

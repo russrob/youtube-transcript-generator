@@ -10,6 +10,39 @@ export interface ScriptGenerationOptions {
   includeConclusion?: boolean;
   keyPoints?: string[];
   customInstructions?: string;
+  // Enhanced features
+  generateHooks?: boolean;
+  generateTitlePack?: boolean;
+  generateThumbnailPremises?: boolean;
+  cta?: {
+    type: 'free_resource' | 'newsletter' | 'sponsor' | 'subscribe' | 'custom';
+    label: string;
+    url?: string;
+  };
+  relink?: {
+    url: string;
+    title?: string;
+  };
+  mode?: 'bullet' | 'word' | 'hybrid';
+}
+
+export interface Hook {
+  id: string;
+  type: 'question' | 'context' | 'bold_statement' | 'curiosity_gap';
+  content: string;
+  reasoning: string;
+}
+
+export interface TitleSuggestion {
+  title: string;
+  reasoning: string;
+  clickability_score: number;
+}
+
+export interface ThumbnailPremise {
+  concept: string;
+  visual_elements: string[];
+  contrast_type: 'before_after' | 'a_b_comparison' | 'problem_solution' | 'curiosity';
 }
 
 export interface GeneratedScript {
@@ -18,6 +51,12 @@ export interface GeneratedScript {
   estimatedDuration: number;
   wordCount: number;
   sections: ScriptSection[];
+  // Enhanced features
+  hooks?: Hook[];
+  titlePack?: TitleSuggestion[];
+  thumbnailPremises?: ThumbnailPremise[];
+  clickConfirmation?: string;
+  payoutMoments?: string[];
 }
 
 export interface ScriptSection {
@@ -85,7 +124,7 @@ export async function generateScript(
         messages: [
           {
             role: "system",
-            content: "You are an expert script writer who creates engaging, well-structured scripts from video transcripts. You always respond with valid JSON in the exact format requested."
+            content: "You are a YouTube Script Architect specializing in HIGH-RETENTION content that maximizes watch time and engagement. You create scripts with click confirmation, hooks, payout structure, and native CTAs. Always respond with valid JSON in the exact format requested."
           },
           {
             role: "user", 
@@ -194,43 +233,87 @@ function buildScriptPrompt(transcript: string, videoTitle: string, options: Scri
     ? `\n\nAdditional instructions: ${options.customInstructions}`
     : '';
 
-  return `Please create a ${options.durationMin}-minute script based on the following YouTube video transcript.
+  const ctaSection = options.cta 
+    ? `\n\n**Call-to-Action:**\nType: ${options.cta.type}\nLabel: "${options.cta.label}"\n${options.cta.url ? `URL: ${options.cta.url}` : ''}`
+    : '';
 
-**Video Title:** ${videoTitle}
+  const relinkSection = options.relink 
+    ? `\n\n**Relink Outro:**\nNext Video: ${options.relink.url}\n${options.relink.title ? `Title: "${options.relink.title}"` : ''}`
+    : '';
 
-**Target Duration:** ${options.durationMin} minutes
-**Style:** ${options.style} - ${styleInstructions}
-**Audience:** ${options.audience} - ${audienceInstructions}
-${toneInstructions ? `**Tone:** ${toneInstructions}` : ''}
+  // Enhanced prompt for high-retention YouTube scripts
+  return `You are a YouTube Script Architect specializing in HIGH-RETENTION content. Create a script that maximizes watch time and engagement.
 
-**Structure Requirements:**
-${options.includeIntro ? '- Include an engaging introduction' : '- Start directly with main content'}
-${options.includeConclusion ? '- Include a strong conclusion with call-to-action' : '- End with main content summary'}
-- Break content into clear sections with smooth transitions
-- Aim for approximately ${Math.round(150 * options.durationMin)} words total (150 words per minute)
+**SOURCE MATERIAL:**
+Video Title: ${videoTitle}
+Transcript: ${transcript}
 
-**Original Transcript:**
-${transcript}
+**TARGET SPECIFICATIONS:**
+Duration: ${options.durationMin} minutes (${Math.round(150 * options.durationMin)} words)
+Style: ${options.style} - ${styleInstructions}
+Audience: ${options.audience} - ${audienceInstructions}
+${toneInstructions ? `Tone: ${toneInstructions}` : ''}
+Mode: ${options.mode || 'hybrid'} (bullet = punchy lists, word = flowing prose, hybrid = mixed)
 
-${keyPointsSection}${customSection}
+${keyPointsSection}${ctaSection}${relinkSection}${customSection}
 
-**Required Response Format (JSON):**
+**CRITICAL REQUIREMENTS:**
+
+1. **CLICK CONFIRMATION** - First 2-3 lines must explicitly confirm the video title promise
+2. **HOOK VARIATIONS** - Generate 3-5 different opening hooks if requested
+3. **PAYOUT STRUCTURE** - End each major section with a valuable insight/takeaway
+4. **MINI RE-HOOKS** - Insert curiosity bridges between sections to prevent drop-off
+5. **NATIVE CTA** - Integrate call-to-action naturally into content flow
+6. **RELINK OUTRO** - Bridge to next video with compelling reason to watch
+
+**RESPONSE FORMAT (JSON):**
 {
-  "title": "Engaging title for the script",
-  "content": "Full script content with clear paragraph breaks",
+  "title": "Script title (can be different from video title)",
+  "content": "Complete script with proper formatting and flow",
   "estimatedDuration": ${options.durationMin},
-  "wordCount": 000,
+  "wordCount": 0,
+  "clickConfirmation": "First 2-3 lines that confirm the title promise",
   "sections": [
     {
-      "title": "Section name",
-      "content": "Section content",
+      "title": "Section name", 
+      "content": "Section content with payout at end",
       "estimatedDuration": 0.0,
       "type": "intro|main|conclusion|transition"
     }
-  ]
+  ],
+  ${options.generateHooks ? `"hooks": [
+    {
+      "id": "hook_1",
+      "type": "question|context|bold_statement|curiosity_gap",
+      "content": "Hook content",
+      "reasoning": "Why this hook works"
+    }
+  ],` : ''}
+  ${options.generateTitlePack ? `"titlePack": [
+    {
+      "title": "Alternative title",
+      "reasoning": "Why this title works",
+      "clickability_score": 8.5
+    }
+  ],` : ''}
+  ${options.generateThumbnailPremises ? `"thumbnailPremises": [
+    {
+      "concept": "Visual concept description",
+      "visual_elements": ["element1", "element2"],
+      "contrast_type": "before_after|a_b_comparison|problem_solution|curiosity"
+    }
+  ],` : ''}
+  "payoutMoments": ["Key insight 1", "Key insight 2", "Key insight 3"]
 }
 
-Ensure the JSON is valid and follows this exact structure.`;
+STRUCTURE YOUR SCRIPT FOR MAXIMUM RETENTION:
+- Hook (0-15s): Grab attention + confirm click
+- Context (15-30s): Set up the problem/promise  
+- Value Delivery (30s-90%): Main content with payouts
+- CTA Integration (80-90%): Natural call-to-action
+- Outro/Relink (90-100%): Bridge to next video
+
+Make every line count for retention!`;
 }
 
 /**
@@ -287,7 +370,7 @@ function getToneInstructions(tone: string): string {
  * Validates that the generated script has the correct structure
  */
 function isValidGeneratedScript(script: any): script is GeneratedScript {
-  return (
+  const baseValid = (
     script &&
     typeof script.title === 'string' &&
     typeof script.content === 'string' &&
@@ -302,4 +385,193 @@ function isValidGeneratedScript(script: any): script is GeneratedScript {
       typeof section.type === 'string'
     )
   );
+
+  if (!baseValid) return false;
+
+  // Validate enhanced features if present
+  if (script.hooks && !Array.isArray(script.hooks)) return false;
+  if (script.titlePack && !Array.isArray(script.titlePack)) return false;
+  if (script.thumbnailPremises && !Array.isArray(script.thumbnailPremises)) return false;
+  if (script.payoutMoments && !Array.isArray(script.payoutMoments)) return false;
+  if (script.clickConfirmation && typeof script.clickConfirmation !== 'string') return false;
+
+  // Validate hook structure if present
+  if (script.hooks && script.hooks.length > 0) {
+    const hooksValid = script.hooks.every((hook: any) =>
+      hook &&
+      typeof hook.id === 'string' &&
+      typeof hook.type === 'string' &&
+      typeof hook.content === 'string' &&
+      typeof hook.reasoning === 'string'
+    );
+    if (!hooksValid) return false;
+  }
+
+  // Validate title pack structure if present
+  if (script.titlePack && script.titlePack.length > 0) {
+    const titlePackValid = script.titlePack.every((title: any) =>
+      title &&
+      typeof title.title === 'string' &&
+      typeof title.reasoning === 'string' &&
+      typeof title.clickability_score === 'number'
+    );
+    if (!titlePackValid) return false;
+  }
+
+  // Validate thumbnail premises structure if present
+  if (script.thumbnailPremises && script.thumbnailPremises.length > 0) {
+    const thumbnailsValid = script.thumbnailPremises.every((thumb: any) =>
+      thumb &&
+      typeof thumb.concept === 'string' &&
+      Array.isArray(thumb.visual_elements) &&
+      typeof thumb.contrast_type === 'string'
+    );
+    if (!thumbnailsValid) return false;
+  }
+
+  return true;
+}
+
+/**
+ * Generates a title and thumbnail pack for a video
+ */
+export async function generateTitleAndThumbnailPack(
+  transcript: string,
+  videoTitle: string,
+  topic?: string,
+  niche?: string
+): Promise<{ success: true; titlePack: TitleSuggestion[]; thumbnailPremises: ThumbnailPremise[] } | { success: false; error: ScriptGenerationError }> {
+  try {
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    if (!process.env.OPENAI_API_KEY) {
+      return {
+        success: false,
+        error: {
+          code: 'API_ERROR',
+          message: 'OpenAI API key not configured'
+        }
+      };
+    }
+
+    const prompt = `You are a YouTube Packaging Expert specializing in high-clickability titles and thumbnails.
+
+**TASK:** Generate 5 compelling title options and 3 thumbnail premises for this video.
+
+**SOURCE MATERIAL:**
+Original Title: ${videoTitle}
+${topic ? `Topic: ${topic}` : ''}
+${niche ? `Niche: ${niche}` : ''}
+Transcript: ${transcript.substring(0, 2000)}... [truncated]
+
+**TITLE REQUIREMENTS:**
+- Create curiosity loops without giving away the answer
+- Use numbers, questions, or bold statements
+- Keep under 60 characters for mobile optimization
+- Score each title for clickability (1-10)
+
+**THUMBNAIL REQUIREMENTS:**
+- Focus on visual contrast and emotion
+- Suggest specific visual elements and text overlays
+- Create before/after or A/B comparison opportunities
+- Consider facial expressions and color psychology
+
+**RESPONSE FORMAT (JSON):**
+{
+  "titlePack": [
+    {
+      "title": "Compelling title under 60 characters",
+      "reasoning": "Why this title creates curiosity and compels clicks",
+      "clickability_score": 8.5
+    }
+  ],
+  "thumbnailPremises": [
+    {
+      "concept": "Main visual concept description",
+      "visual_elements": ["facial expression", "text overlay", "background element"],
+      "contrast_type": "before_after"
+    }
+  ]
+}
+
+Generate exactly 5 titles and 3 thumbnail concepts.`;
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [
+        {
+          role: "system",
+          content: "You are a YouTube Packaging Expert who creates viral titles and thumbnails. Always respond with valid JSON."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      max_tokens: 2000,
+      temperature: 0.8, // Higher creativity for titles
+    });
+
+    const response = completion.choices[0]?.message?.content;
+    if (!response) {
+      return {
+        success: false,
+        error: {
+          code: 'API_ERROR',
+          message: 'No response received from OpenAI'
+        }
+      };
+    }
+
+    let parsed: { titlePack: TitleSuggestion[]; thumbnailPremises: ThumbnailPremise[] };
+    try {
+      parsed = JSON.parse(response);
+    } catch (parseError) {
+      return {
+        success: false,
+        error: {
+          code: 'API_ERROR',
+          message: 'Failed to parse AI response as JSON'
+        }
+      };
+    }
+
+    // Validate structure
+    if (!parsed.titlePack || !Array.isArray(parsed.titlePack) || parsed.titlePack.length !== 5) {
+      return {
+        success: false,
+        error: {
+          code: 'API_ERROR',
+          message: 'Invalid title pack structure'
+        }
+      };
+    }
+
+    if (!parsed.thumbnailPremises || !Array.isArray(parsed.thumbnailPremises) || parsed.thumbnailPremises.length !== 3) {
+      return {
+        success: false,
+        error: {
+          code: 'API_ERROR',
+          message: 'Invalid thumbnail premises structure'
+        }
+      };
+    }
+
+    return {
+      success: true,
+      titlePack: parsed.titlePack,
+      thumbnailPremises: parsed.thumbnailPremises
+    };
+
+  } catch (error: any) {
+    return {
+      success: false,
+      error: {
+        code: 'API_ERROR',
+        message: `Unexpected error: ${error.message}`
+      }
+    };
+  }
 }

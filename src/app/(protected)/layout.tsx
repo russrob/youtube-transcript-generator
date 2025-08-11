@@ -1,7 +1,7 @@
 import { AppHeader } from '@/components/ui/AppHeader';
 import { AppFooter } from '@/components/ui/AppFooter';
 
-export default function MarketingLayout({
+export default function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;

@@ -9,6 +9,13 @@ export interface SubscriptionLimits {
   apiAccess: boolean;
   teamMembers: number;
   supportLevel: 'basic' | 'priority' | 'dedicated';
+  // Enhanced features
+  hookGeneration: boolean;
+  titleAndThumbnailPack: boolean;
+  ctaIntegration: boolean;
+  relinkOutros: boolean;
+  clickConfirmation: boolean;
+  payoutStructure: boolean;
 }
 
 export interface UsageInfo {
@@ -31,7 +38,14 @@ export function getSubscriptionLimits(tier: SubscriptionTier): SubscriptionLimit
       watermarkFree: false,
       apiAccess: false,
       teamMembers: 1,
-      supportLevel: 'basic'
+      supportLevel: 'basic',
+      // Enhanced features - Basic only
+      hookGeneration: false,
+      titleAndThumbnailPack: false,
+      ctaIntegration: false,
+      relinkOutros: false,
+      clickConfirmation: true, // Basic feature for all
+      payoutStructure: false
     },
     PRO: {
       monthlyScripts: 50,
@@ -40,7 +54,14 @@ export function getSubscriptionLimits(tier: SubscriptionTier): SubscriptionLimit
       watermarkFree: true,
       apiAccess: true,
       teamMembers: 1,
-      supportLevel: 'priority'
+      supportLevel: 'priority',
+      // Enhanced features - Pro gets most
+      hookGeneration: true,
+      titleAndThumbnailPack: true,
+      ctaIntegration: true,
+      relinkOutros: true,
+      clickConfirmation: true,
+      payoutStructure: true
     },
     BUSINESS: {
       monthlyScripts: 200,
@@ -49,7 +70,14 @@ export function getSubscriptionLimits(tier: SubscriptionTier): SubscriptionLimit
       watermarkFree: true,
       apiAccess: true,
       teamMembers: 5,
-      supportLevel: 'priority'
+      supportLevel: 'priority',
+      // Enhanced features - All features
+      hookGeneration: true,
+      titleAndThumbnailPack: true,
+      ctaIntegration: true,
+      relinkOutros: true,
+      clickConfirmation: true,
+      payoutStructure: true
     },
     ENTERPRISE: {
       monthlyScripts: -1, // Unlimited
@@ -58,7 +86,14 @@ export function getSubscriptionLimits(tier: SubscriptionTier): SubscriptionLimit
       watermarkFree: true,
       apiAccess: true,
       teamMembers: -1, // Unlimited
-      supportLevel: 'dedicated'
+      supportLevel: 'dedicated',
+      // Enhanced features - All features + future ones
+      hookGeneration: true,
+      titleAndThumbnailPack: true,
+      ctaIntegration: true,
+      relinkOutros: true,
+      clickConfirmation: true,
+      payoutStructure: true
     }
   };
 

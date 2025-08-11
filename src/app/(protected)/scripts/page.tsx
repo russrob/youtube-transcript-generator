@@ -1,5 +1,4 @@
 import { requireUser } from '@/lib/auth/require-user';
-import { AppHeader } from '@/components/ui/AppHeader';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import { ScriptsClient } from './scripts-client';
@@ -51,8 +50,7 @@ export default async function ScriptsPage() {
   const totalDuration = scripts.reduce((sum, script) => sum + script.durationMin, 0);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <AppHeader />
+    <>
       
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
@@ -99,6 +97,6 @@ export default async function ScriptsPage() {
           userName={clerkUser.firstName || 'User'}
         />
       </div>
-    </div>
+    </>
   );
 }
