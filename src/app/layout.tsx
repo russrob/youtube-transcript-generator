@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'ScriptForge AI - YouTube Transcript to Script Generator',
-  description: 'Transform YouTube videos into polished scripts with AI-powered generation. Generate professional scripts in 60 seconds with hooks, titles, and premium features.',
+  description: 'Transform YouTube videos into polished scripts with AI-powered generation. Generate professional scripts in seconds with hooks, titles, and premium features.',
   keywords: 'YouTube transcript, script generator, AI script writer, video to script, content creation, YouTube tools',
   authors: [{ name: 'ScriptForge AI' }],
   creator: 'ScriptForge AI',
