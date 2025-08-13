@@ -45,7 +45,7 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider
-      domain=""
+      frontendApi={process.env.NEXT_PUBLIC_CLERK_FRONTEND_API}
       isSatellite={false}
     >
       <html lang="en">
