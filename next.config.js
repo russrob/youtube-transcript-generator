@@ -51,11 +51,11 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://clerk.accounts.dev",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://clerk.accounts.dev https://*.clerk.accounts.dev",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: https:",
-              "connect-src 'self' https://api.openai.com https://api.stripe.com https://clerk.accounts.dev https://*.supabase.co https://*.sentry.io",
+              "connect-src 'self' https://api.openai.com https://api.stripe.com https://clerk.accounts.dev https://*.clerk.accounts.dev https://*.supabase.co https://*.sentry.io",
               "frame-src https://js.stripe.com https://hooks.stripe.com",
               "object-src 'none'",
               "base-uri 'self'",
