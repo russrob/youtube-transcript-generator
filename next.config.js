@@ -3,6 +3,7 @@ const { withSentryConfig } = require('@sentry/nextjs');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Force fresh deployment to apply production Clerk environment variables
+  // Vercel deployment timestamp: 2025-08-13T18:55:00Z
   // Temporarily disable TypeScript and ESLint errors during build
   typescript: {
     ignoreBuildErrors: true,
