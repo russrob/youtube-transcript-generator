@@ -2,6 +2,7 @@ const { withSentryConfig } = require('@sentry/nextjs');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Force fresh deployment to apply production Clerk environment variables
   // Temporarily disable TypeScript and ESLint errors during build
   typescript: {
     ignoreBuildErrors: true,
