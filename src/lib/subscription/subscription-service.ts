@@ -16,6 +16,14 @@ export interface SubscriptionLimits {
   relinkOutros: boolean;
   clickConfirmation: boolean;
   payoutStructure: boolean;
+  // Premium remix features
+  keyPointsIntegration: boolean;
+  customInstructions: boolean;
+  scriptRemixing: boolean;
+  creativityControls: boolean;
+  batchGeneration: boolean;
+  abTesting: boolean;
+  templateLibrary: boolean;
 }
 
 export interface UsageInfo {
@@ -45,7 +53,15 @@ export function getSubscriptionLimits(tier: SubscriptionTier): SubscriptionLimit
       ctaIntegration: false,
       relinkOutros: false,
       clickConfirmation: true, // Basic feature for all
-      payoutStructure: false
+      payoutStructure: false,
+      // Premium remix features - FREE tier gets basic script generation only
+      keyPointsIntegration: false,
+      customInstructions: false,
+      scriptRemixing: false,
+      creativityControls: false,
+      batchGeneration: false,
+      abTesting: false,
+      templateLibrary: false
     },
     PRO: {
       monthlyScripts: 50,
@@ -61,7 +77,15 @@ export function getSubscriptionLimits(tier: SubscriptionTier): SubscriptionLimit
       ctaIntegration: true,
       relinkOutros: true,
       clickConfirmation: true,
-      payoutStructure: true
+      payoutStructure: true,
+      // Premium remix features - PRO tier gets core remix capabilities
+      keyPointsIntegration: true,
+      customInstructions: true,
+      scriptRemixing: true,
+      creativityControls: true,
+      batchGeneration: false, // Reserved for BUSINESS+
+      abTesting: false, // Reserved for BUSINESS+
+      templateLibrary: false // Reserved for BUSINESS+
     },
     BUSINESS: {
       monthlyScripts: 200,
@@ -77,7 +101,15 @@ export function getSubscriptionLimits(tier: SubscriptionTier): SubscriptionLimit
       ctaIntegration: true,
       relinkOutros: true,
       clickConfirmation: true,
-      payoutStructure: true
+      payoutStructure: true,
+      // Premium remix features - BUSINESS tier gets advanced features
+      keyPointsIntegration: true,
+      customInstructions: true,
+      scriptRemixing: true,
+      creativityControls: true,
+      batchGeneration: true,
+      abTesting: true,
+      templateLibrary: false // Reserved for ENTERPRISE
     },
     ENTERPRISE: {
       monthlyScripts: -1, // Unlimited
@@ -93,7 +125,15 @@ export function getSubscriptionLimits(tier: SubscriptionTier): SubscriptionLimit
       ctaIntegration: true,
       relinkOutros: true,
       clickConfirmation: true,
-      payoutStructure: true
+      payoutStructure: true,
+      // Premium remix features - ENTERPRISE tier gets all features
+      keyPointsIntegration: true,
+      customInstructions: true,
+      scriptRemixing: true,
+      creativityControls: true,
+      batchGeneration: true,
+      abTesting: true,
+      templateLibrary: true
     }
   };
 
@@ -366,4 +406,98 @@ export function getAvailableStyles(tier: SubscriptionTier): ScriptStyle[] {
 
   const limits = getSubscriptionLimits(tier);
   return limits.advancedStyles ? [...basicStyles, ...proOnlyStyles] : basicStyles;
+}
+
+/**
+ * Check if user has access to key points integration
+ */
+export function hasKeyPointsAccess(tier: SubscriptionTier): boolean {
+  const limits = getSubscriptionLimits(tier);
+  return limits.keyPointsIntegration;
+}
+
+/**
+ * Check if user has access to custom instructions
+ */
+export function hasCustomInstructionsAccess(tier: SubscriptionTier): boolean {
+  const limits = getSubscriptionLimits(tier);
+  return limits.customInstructions;
+}
+
+/**
+ * Check if user has access to script remixing
+ */
+export function hasScriptRemixingAccess(tier: SubscriptionTier): boolean {
+  const limits = getSubscriptionLimits(tier);
+  return limits.scriptRemixing;
+}
+
+/**
+ * Check if user has access to creativity controls
+ */
+export function hasCreativityControlsAccess(tier: SubscriptionTier): boolean {
+  const limits = getSubscriptionLimits(tier);
+  return limits.creativityControls;
+}
+
+/**
+ * Check if user has access to batch generation
+ */
+export function hasBatchGenerationAccess(tier: SubscriptionTier): boolean {
+  const limits = getSubscriptionLimits(tier);
+  return limits.batchGeneration;
+}
+
+/**
+ * Check if user has access to A/B testing
+ */
+export function hasABTestingAccess(tier: SubscriptionTier): boolean {
+  const limits = getSubscriptionLimits(tier);
+  return limits.abTesting;
+}
+
+/**
+ * Check if user has access to template library
+ */
+export function hasTemplateLibraryAccess(tier: SubscriptionTier): boolean {
+  const limits = getSubscriptionLimits(tier);
+  return limits.templateLibrary;
+}
+
+/**
+ * Check if user is a master admin (based on email or user ID)
+ */
+export function isMasterAdmin(userEmail: string, userId: string): boolean {
+  // Get admin emails from environment variables
+  const adminEmailsEnv = process.env.ADMIN_EMAILS || '';
+  const adminEmails = adminEmailsEnv.split(',').map(email => email.trim()).filter(Boolean);
+  
+  // Get admin user IDs from environment variables
+  const adminUserIdsEnv = process.env.ADMIN_USER_IDS || '';
+  const adminUserIds = adminUserIdsEnv.split(',').map(id => id.trim()).filter(Boolean);
+  
+  return adminEmails.includes(userEmail.toLowerCase()) || adminUserIds.includes(userId);
+}
+
+/**
+ * Get effective subscription tier for user (accounting for master admin status)
+ */
+export function getEffectiveSubscriptionTier(
+  actualTier: SubscriptionTier, 
+  userEmail: string, 
+  userId: string,
+  testMode?: string,
+  adminKey?: string
+): SubscriptionTier {
+  // Check URL-based admin test mode first
+  if (testMode === 'premium' && adminKey === 'test123') {
+    return 'PRO';
+  }
+  
+  // Check if user is master admin
+  if (isMasterAdmin(userEmail, userId)) {
+    return 'ENTERPRISE'; // Give master admins the highest tier
+  }
+  
+  return actualTier;
 }

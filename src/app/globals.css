@@ -1,68 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
  
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Sketch-Inspired Design Tokens */
+    
+    /* Colors - Authentic Sketch Palette */
+    --color-bg: 0 0% 98%;               /* #FAFAFA - very light gray background */
+    --color-surface: 0 0% 100%;         /* #FFFFFF - white cards/sections */
+    --color-text: 0 0% 15%;             /* #262626 - warm dark gray text */
+    --color-text-muted: 0 0% 45%;       /* #737373 - muted text */
+    --color-border: 0 0% 90%;           /* #E6E6E6 - very light borders */
+    --color-accent: 0 0% 15%;           /* #262626 - dark button background */
+    --color-accent-600: 0 0% 10%;       /* #1A1A1A - darker on hover */
+    --color-link: 0 0% 15%;             /* #262626 - links same as text */
+    --color-success: 142 71% 45%;       /* #16A34A */
+    --color-warning: 32 95% 44%;        /* #F59E0B */
+    --color-danger: 0 74% 42%;          /* #DC2626 */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
- 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
- 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
- 
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
- 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
- 
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
- 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
- 
-    --radius: 0.5rem;
-  }
- 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
- 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
- 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
- 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
- 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
- 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
- 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
- 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
- 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    /* Legacy compatibility mappings */
+    --background: var(--color-bg);
+    --foreground: var(--color-text);
+    --card: var(--color-bg);
+    --card-foreground: var(--color-text);
+    --popover: var(--color-bg);
+    --popover-foreground: var(--color-text);
+    --primary: var(--color-accent);
+    --primary-foreground: var(--color-text);
+    --secondary: var(--color-surface);
+    --secondary-foreground: var(--color-text);
+    --muted: var(--color-surface);
+    --muted-foreground: var(--color-text-muted);
+    --accent: var(--color-accent);
+    --accent-foreground: var(--color-text);
+    --destructive: var(--color-danger);
+    --destructive-foreground: var(--color-bg);
+    --border: var(--color-border);
+    --input: var(--color-border);
+    --ring: var(--color-accent);
+    
+    /* Radius */
+    --radius-sm: 8px;     /* small pills, inputs */
+    --radius-md: 12px;    /* cards, screenshots */
+    --radius-lg: 16px;    /* hero tiles */
+    --radius: var(--radius-sm); /* legacy compatibility */
+    
+    /* Shadows */
+    --shadow-soft: 0 2px 12px hsl(0 0% 0% / 0.06);
+    --shadow-card: 0 8px 30px hsl(0 0% 0% / 0.08);
+    
+    /* Spacing */
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-12: 48px;
+    --space-16: 64px;
+    --content-max: 1140px;
   }
 }
  
@@ -70,7 +68,34 @@
   * {
     @apply border-border;
   }
+  
+  html {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', sans-serif;
+  }
+  
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+    font-variation-settings: 'opsz' 32;
+  }
+  
+  /* Large headings use serif font like Sketch */
+  .heading-hero, .heading-large {
+    font-family: 'Crimson Text', Georgia, 'Times New Roman', serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  
+  /* Other headings use Inter */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', sans-serif;
+    letter-spacing: -0.01em;
+  }
+  
+  /* Focus styles */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-offset-2;
+    ring-color: hsl(var(--color-accent));
   }
 }

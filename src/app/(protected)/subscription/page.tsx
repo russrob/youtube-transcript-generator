@@ -78,10 +78,10 @@ export default async function SubscriptionPage() {
   return (
     <>
       
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Subscription & Usage</h1>
-          <p className="mt-2 text-gray-600">
+      <div className="max-w-6xl mx-auto py-12 px-6">
+        <div className="mb-12">
+          <h1 className="font-sketch-serif text-5xl text-sketch-text mb-4 leading-tight">Subscription & Usage</h1>
+          <p className="text-xl text-sketch-text-muted leading-relaxed">
             Manage your subscription and track your usage
           </p>
         </div>
@@ -124,7 +124,7 @@ export default async function SubscriptionPage() {
                   {tierFeatures[currentTier].map((feature, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-                      <span className="text-sm text-gray-600">{feature}</span>
+                      <span className="text-sm text-sketch-text-muted">{feature}</span>
                     </div>
                   ))}
                 </div>
@@ -205,7 +205,7 @@ export default async function SubscriptionPage() {
                       {features.map((feature, index) => (
                         <div key={index} className="flex items-center space-x-2">
                           <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-                          <span className="text-sm text-gray-600">{feature}</span>
+                          <span className="text-sm text-sketch-text-muted">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -214,12 +214,12 @@ export default async function SubscriptionPage() {
                       targetTier={tierKey}
                       currentTier={currentTier}
                       isCurrentTier={isCurrentTier}
-                      className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
+                      className={`w-full py-3 px-6 rounded-xl font-medium transition-colors ${
                         isCurrentTier
-                          ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
+                          ? 'bg-sketch-surface text-sketch-text-muted cursor-not-allowed border border-sketch-border'
                           : isUpgrade
-                          ? 'bg-blue-600 text-white hover:bg-blue-700'
-                          : 'bg-gray-600 text-white hover:bg-gray-700'
+                          ? 'bg-sketch-accent text-white hover:bg-sketch-accent-600'
+                          : 'bg-sketch-accent text-white hover:bg-sketch-accent-600'
                       }`}
                     >
                       {isCurrentTier 
@@ -237,42 +237,42 @@ export default async function SubscriptionPage() {
         </div>
 
         {/* FAQ Section */}
-        <div className="mt-12 bg-white rounded-lg border border-gray-200 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Frequently Asked Questions</h2>
+        <div className="mt-12 bg-white rounded-xl shadow-sketch-soft border border-sketch-border p-8">
+          <h2 className="font-sketch-serif text-3xl text-sketch-text mb-6">Frequently Asked Questions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-medium text-gray-900 mb-2">What happens when I reach my limit?</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-medium text-sketch-text mb-2">What happens when I reach my limit?</h3>
+              <p className="text-sm text-sketch-text-muted">
                 You won't be able to generate new scripts until your usage resets at the beginning of the next month, or you can upgrade your plan for more scripts.
               </p>
             </div>
             <div>
-              <h3 className="font-medium text-gray-900 mb-2">What is hook generation?</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-medium text-sketch-text mb-2">What is hook generation?</h3>
+              <p className="text-sm text-sketch-text-muted">
                 Pro users get 3-5 different opening hook options (questions, bold statements, context drops) to maximize video retention from the first seconds.
               </p>
             </div>
             <div>
-              <h3 className="font-medium text-gray-900 mb-2">What's in the title & thumbnail pack?</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-medium text-sketch-text mb-2">What's in the title & thumbnail pack?</h3>
+              <p className="text-sm text-sketch-text-muted">
                 Get 5 high-clickability title alternatives and 3 thumbnail concept ideas with visual elements and contrast types to boost your video performance.
               </p>
             </div>
             <div>
-              <h3 className="font-medium text-gray-900 mb-2">What are Pro-only script styles?</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-medium text-sketch-text mb-2">What are Pro-only script styles?</h3>
+              <p className="text-sm text-sketch-text-muted">
                 Persuasive (influence & convince), Narrative (rich storytelling), and Academic (scholarly analysis) styles use advanced AI techniques.
               </p>
             </div>
             <div>
-              <h3 className="font-medium text-gray-900 mb-2">How does the payout structure work?</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-medium text-sketch-text mb-2">How does the payout structure work?</h3>
+              <p className="text-sm text-sketch-text-muted">
                 Pro scripts end each section with valuable insights and include mini re-hooks between sections to prevent viewer drop-off and maximize watch time.
               </p>
             </div>
             <div>
-              <h3 className="font-medium text-gray-900 mb-2">What is CTA integration?</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-medium text-sketch-text mb-2">What is CTA integration?</h3>
+              <p className="text-sm text-sketch-text-muted">
                 Seamlessly integrate calls-to-action (subscribe, newsletter, products) into your script flow naturally, plus automated relink outros to your next video.
               </p>
             </div>

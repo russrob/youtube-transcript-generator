@@ -1,6 +1,7 @@
 import { requireUser } from '@/lib/auth/require-user';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 import { ScriptsClient } from './scripts-client';
 
 export default async function ScriptsPage() {
@@ -52,42 +53,41 @@ export default async function ScriptsPage() {
   return (
     <>
       
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
+      <div className="max-w-6xl mx-auto py-12 px-6">
+        <div className="mb-12">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">My Scripts</h1>
-              <p className="mt-2 text-gray-600">
+              <h1 className="font-sketch-serif text-5xl text-sketch-text mb-4 leading-tight">My Scripts</h1>
+              <p className="text-xl text-sketch-text-muted leading-relaxed">
                 Manage all your generated scripts and transcripts
               </p>
             </div>
-            <Link
-              href="/studio"
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Create New Script
+            <Link href="/studio">
+              <Button size="lg">
+                Create New Script
+              </Button>
             </Link>
           </div>
         </div>
 
         {/* Stats Dashboard */}
         {totalScripts > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="text-sm font-medium text-gray-600">Total Scripts</div>
-              <div className="text-3xl font-bold text-blue-600">{totalScripts}</div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            <div className="bg-white rounded-xl shadow-sketch-soft border border-sketch-border p-6">
+              <div className="text-sketch-small font-medium text-sketch-text-muted">Total Scripts</div>
+              <div className="text-3xl font-bold text-sketch-text">{totalScripts}</div>
             </div>
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="text-sm font-medium text-gray-600">This Month</div>
-              <div className="text-3xl font-bold text-green-600">{thisMonth}</div>
+            <div className="bg-white rounded-xl shadow-sketch-soft border border-sketch-border p-6">
+              <div className="text-sketch-small font-medium text-sketch-text-muted">This Month</div>
+              <div className="text-3xl font-bold text-sketch-text">{thisMonth}</div>
             </div>
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="text-sm font-medium text-gray-600">Preferred Style</div>
-              <div className="text-lg font-semibold text-gray-900 capitalize">{mostUsedStyle.toLowerCase()}</div>
+            <div className="bg-white rounded-xl shadow-sketch-soft border border-sketch-border p-6">
+              <div className="text-sketch-small font-medium text-sketch-text-muted">Preferred Style</div>
+              <div className="text-lg font-semibold text-sketch-text capitalize">{mostUsedStyle.toLowerCase()}</div>
             </div>
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="text-sm font-medium text-gray-600">Total Duration</div>
-              <div className="text-3xl font-bold text-purple-600">{totalDuration}m</div>
+            <div className="bg-white rounded-xl shadow-sketch-soft border border-sketch-border p-6">
+              <div className="text-sketch-small font-medium text-sketch-text-muted">Total Duration</div>
+              <div className="text-3xl font-bold text-sketch-text">{totalDuration}m</div>
             </div>
           </div>
         )}

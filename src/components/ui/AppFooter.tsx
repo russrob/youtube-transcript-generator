@@ -4,45 +4,45 @@ export function AppFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-white border-t border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="bg-sketch-surface border-t border-sketch-border">
+      <div className="max-w-sketch-content mx-auto px-sketch-6 py-sketch-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-sketch-8">
           {/* Logo & Description */}
           <div className="md:col-span-1">
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="bg-blue-600 text-white p-2 rounded-lg">
+            <div className="flex items-center space-x-sketch-3 mb-sketch-4">
+              <div className="bg-sketch-accent text-sketch-text p-2 rounded-sketch-sm">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
                 </svg>
               </div>
-              <span className="text-lg font-bold text-gray-900">ScriptForge AI</span>
+              <span className="text-lg font-bold text-sketch-text">ScriptForge AI</span>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sketch-small text-sketch-text-muted leading-sketch-normal">
               Transform YouTube videos into professional scripts with AI-powered generation.
             </p>
           </div>
 
           {/* Product Links */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-3">Product</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="font-semibold text-sketch-text mb-sketch-4 text-sketch-body">Product</h3>
+            <ul className="space-y-sketch-3 text-sketch-small">
               <li>
-                <Link href="/studio" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <Link href="/studio" className="text-sketch-text-muted hover:text-sketch-text transition-colors">
                   Studio
                 </Link>
               </li>
               <li>
-                <Link href="/#features" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <Link href="/#features" className="text-sketch-text-muted hover:text-sketch-text transition-colors">
                   Features
                 </Link>
               </li>
               <li>
-                <Link href="/#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <Link href="/#pricing" className="text-sketch-text-muted hover:text-sketch-text transition-colors">
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link href="/api-docs" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <Link href="/api-docs" className="text-sketch-text-muted hover:text-sketch-text transition-colors">
                   API
                 </Link>
               </li>
@@ -51,25 +51,25 @@ export function AppFooter() {
 
           {/* Company Links */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-3">Company</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="font-semibold text-sketch-text mb-sketch-4 text-sketch-body">Company</h3>
+            <ul className="space-y-sketch-3 text-sketch-small">
               <li>
-                <Link href="/about" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <Link href="/about" className="text-sketch-text-muted hover:text-sketch-text transition-colors">
                   About
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <Link href="/blog" className="text-sketch-text-muted hover:text-sketch-text transition-colors">
                   Blog
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <Link href="/contact" className="text-sketch-text-muted hover:text-sketch-text transition-colors">
                   Contact
                 </Link>
               </li>
               <li>
-                <Link href="/careers" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <Link href="/careers" className="text-sketch-text-muted hover:text-sketch-text transition-colors">
                   Careers
                 </Link>
               </li>
@@ -78,25 +78,25 @@ export function AppFooter() {
 
           {/* Legal Links */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-3">Legal</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="font-semibold text-sketch-text mb-sketch-4 text-sketch-body">Legal</h3>
+            <ul className="space-y-sketch-3 text-sketch-small">
               <li>
-                <Link href="/privacy" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <Link href="/privacy" className="text-sketch-text-muted hover:text-sketch-text transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <Link href="/terms" className="text-sketch-text-muted hover:text-sketch-text transition-colors">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/cookies" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <Link href="/cookies" className="text-sketch-text-muted hover:text-sketch-text transition-colors">
                   Cookie Policy
                 </Link>
               </li>
               <li>
-                <Link href="/security" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <Link href="/security" className="text-sketch-text-muted hover:text-sketch-text transition-colors">
                   Security
                 </Link>
               </li>
@@ -104,15 +104,15 @@ export function AppFooter() {
           </div>
         </div>
 
-        <div className="border-t border-gray-200 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm text-gray-600">
+        <div className="border-t border-sketch-border mt-sketch-8 pt-sketch-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-sketch-small text-sketch-text-muted">
             © {currentYear} ScriptForge AI. All rights reserved.
           </p>
           
-          <div className="flex space-x-6 mt-4 md:mt-0">
+          <div className="flex space-x-sketch-6 mt-sketch-4 md:mt-0">
             <a 
               href="https://twitter.com/scriptforge" 
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-sketch-text-muted hover:text-sketch-text transition-colors"
               aria-label="Twitter"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -122,7 +122,7 @@ export function AppFooter() {
             
             <a 
               href="https://linkedin.com/company/scriptforge" 
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-sketch-text-muted hover:text-sketch-text transition-colors"
               aria-label="LinkedIn"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -132,7 +132,7 @@ export function AppFooter() {
             
             <a 
               href="https://github.com/scriptforge" 
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className="text-sketch-text-muted hover:text-sketch-text transition-colors"
               aria-label="GitHub"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

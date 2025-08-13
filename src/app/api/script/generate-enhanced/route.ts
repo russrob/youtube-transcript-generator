@@ -14,7 +14,8 @@ import {
   hasAdvancedStyleAccess,
   hasPriorityProcessing,
   shouldHaveWatermark,
-  getSubscriptionLimits
+  getSubscriptionLimits,
+  getEffectiveSubscriptionTier
 } from '@/lib/subscription/subscription-service';
 
 // Enhanced request validation schema
@@ -104,10 +105,26 @@ export async function POST(request: NextRequest) {
 
     // Get user's subscription info
     const subscription = await getUserSubscription(user.id);
-    const limits = getSubscriptionLimits(subscription.tier);
+    const userEmail = user.emailAddresses[0]?.emailAddress || '';
+
+    // Check for admin test mode and master admin status
+    const { searchParams } = new URL(request.url);
+    const testMode = searchParams.get('test');
+    const adminKey = searchParams.get('admin');
+    
+    // Get effective tier (handles URL test mode and master admin status)
+    const effectiveTier = getEffectiveSubscriptionTier(
+      subscription.tier,
+      userEmail,
+      user.id,
+      testMode || undefined,
+      adminKey || undefined
+    );
+    
+    const limits = getSubscriptionLimits(effectiveTier);
 
     // Check if user has access to the requested script style
-    if (!hasAdvancedStyleAccess(subscription.tier, style)) {
+    if (!hasAdvancedStyleAccess(effectiveTier, style)) {
       return NextResponse.json(
         { 
           error: 'Advanced script styles require a Pro subscription',
@@ -186,9 +203,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Determine priority and watermark settings based on subscription
-    const isPriority = hasPriorityProcessing(subscription.tier);
-    const hasWatermark = shouldHaveWatermark(subscription.tier);
+    // Determine priority and watermark settings based on subscription (or test mode)
+    const isPriority = hasPriorityProcessing(effectiveTier);
+    const hasWatermark = shouldHaveWatermark(effectiveTier);
 
     // Create initial script record with GENERATING status
     const script = await prisma.script.create({

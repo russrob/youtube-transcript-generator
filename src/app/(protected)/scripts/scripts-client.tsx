@@ -4,6 +4,10 @@ import { useState, useMemo } from 'react';
 import { Script, Video } from '@prisma/client';
 import Link from 'next/link';
 import jsPDF from 'jspdf';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 interface ScriptWithVideo extends Script {
   video: {
@@ -28,6 +32,13 @@ export function ScriptsClient({ scripts, userName }: ScriptsClientProps) {
   const [selectedScripts, setSelectedScripts] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [expandedScript, setExpandedScript] = useState<string | null>(null);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState('');
+  const [copiedCount, setCopiedCount] = useState(0);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [scriptToDelete, setScriptToDelete] = useState<ScriptWithVideo | null>(null);
+  const [deletingScript, setDeletingScript] = useState<string | null>(null);
 
   // Filter and sort scripts
   const filteredAndSortedScripts = useMemo(() => {
@@ -115,7 +126,46 @@ export function ScriptsClient({ scripts, userName }: ScriptsClientProps) {
       
     } catch (error) {
       console.error('Error generating PDF:', error);
-      alert('Error generating PDF. Please try again.');
+      setDialogMessage('Error generating PDF. Please try again.');
+      setShowErrorDialog(true);
+    }
+  };
+
+  // Delete script
+  const handleDeleteScript = (script: ScriptWithVideo) => {
+    setScriptToDelete(script);
+    setShowDeleteDialog(true);
+  };
+
+  const confirmDeleteScript = async () => {
+    if (!scriptToDelete) return;
+
+    setDeletingScript(scriptToDelete.id);
+    
+    try {
+      const response = await fetch(`/api/script/delete?id=${scriptToDelete.id}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setDialogMessage(`Script "${scriptToDelete.title}" has been deleted successfully.`);
+        setShowSuccessDialog(true);
+        // Reload the page to refresh the scripts list
+        window.location.reload();
+      } else {
+        setDialogMessage(data.error || 'Failed to delete script. Please try again.');
+        setShowErrorDialog(true);
+      }
+    } catch (error) {
+      console.error('Error deleting script:', error);
+      setDialogMessage('Error deleting script. Please try again.');
+      setShowErrorDialog(true);
+    } finally {
+      setDeletingScript(null);
+      setShowDeleteDialog(false);
+      setScriptToDelete(null);
     }
   };
 
@@ -138,7 +188,9 @@ export function ScriptsClient({ scripts, userName }: ScriptsClientProps) {
       .join('\n\n---\n\n');
     
     navigator.clipboard.writeText(selectedContent);
-    alert(`Copied ${selectedScripts.length} scripts to clipboard`);
+    setCopiedCount(selectedScripts.length);
+    setDialogMessage(`Copied ${selectedScripts.length} scripts to clipboard`);
+    setShowSuccessDialog(true);
   };
 
   const toggleScriptSelection = (scriptId: string) => {
@@ -158,20 +210,19 @@ export function ScriptsClient({ scripts, userName }: ScriptsClientProps) {
 
   if (scripts.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow p-8">
+      <div className="bg-white rounded-xl shadow-sketch-soft border border-sketch-border p-8">
         <div className="text-center py-12">
           <div className="text-6xl mb-4">📝</div>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+          <h2 className="font-sketch-serif text-3xl text-sketch-text mb-2">
             No scripts yet
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-sketch-text-muted mb-6">
             Create your first script from a YouTube video in the Studio
           </p>
-          <Link
-            href="/studio"
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Get Started →
+          <Link href="/studio">
+            <Button size="lg">
+              Get Started →
+            </Button>
           </Link>
         </div>
       </div>
@@ -181,71 +232,76 @@ export function ScriptsClient({ scripts, userName }: ScriptsClientProps) {
   return (
     <div className="space-y-6">
       {/* Search and Filter Controls */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-xl shadow-sketch-soft border border-sketch-border p-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
-            <input
+          <div className="space-y-2">
+            <label className="text-sketch-body font-medium text-sketch-text">Search</label>
+            <Input
               type="text"
               placeholder="Search scripts or videos..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Filter by Style</label>
-            <select
-              value={filterStyle}
-              onChange={(e) => setFilterStyle(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="all">All Styles</option>
-              <option value="PROFESSIONAL">Professional</option>
-              <option value="CASUAL">Casual</option>
-              <option value="EDUCATIONAL">Educational</option>
-              <option value="ENTERTAINING">Entertaining</option>
-              <option value="TECHNICAL">Technical</option>
-              <option value="STORYTELLING">Storytelling</option>
-              <option value="PERSUASIVE">Persuasive ✨</option>
-              <option value="NARRATIVE">Narrative ✨</option>
-              <option value="ACADEMIC">Academic ✨</option>
-            </select>
+          <div className="space-y-2">
+            <label className="text-sketch-body font-medium text-sketch-text">Filter by Style</label>
+            <Select value={filterStyle} onValueChange={setFilterStyle}>
+              <SelectTrigger>
+                <SelectValue placeholder="All Styles" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Styles</SelectItem>
+                <SelectItem value="PROFESSIONAL">Professional</SelectItem>
+                <SelectItem value="CASUAL">Casual</SelectItem>
+                <SelectItem value="EDUCATIONAL">Educational</SelectItem>
+                <SelectItem value="ENTERTAINING">Entertaining</SelectItem>
+                <SelectItem value="TECHNICAL">Technical</SelectItem>
+                <SelectItem value="STORYTELLING">Storytelling</SelectItem>
+                <SelectItem value="PERSUASIVE">Persuasive ✨</SelectItem>
+                <SelectItem value="NARRATIVE">Narrative ✨</SelectItem>
+                <SelectItem value="ACADEMIC">Academic ✨</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Sort by</label>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-              <option value="title">Script Title</option>
-              <option value="video">Video Title</option>
-              <option value="duration">Duration</option>
-            </select>
+          <div className="space-y-2">
+            <label className="text-sketch-body font-medium text-sketch-text">Sort by</label>
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger>
+                <SelectValue placeholder="Newest First" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Newest First</SelectItem>
+                <SelectItem value="oldest">Oldest First</SelectItem>
+                <SelectItem value="title">Script Title</SelectItem>
+                <SelectItem value="video">Video Title</SelectItem>
+                <SelectItem value="duration">Duration</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">View Mode</label>
-            <div className="flex space-x-2">
+          <div className="space-y-2">
+            <label className="text-sketch-body font-medium text-sketch-text">View Mode</label>
+            <div className="inline-flex bg-sketch-surface rounded-lg p-0.5 border border-sketch-border">
               <button
+                type="button"
                 onClick={() => setViewMode('grid')}
-                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                className={`px-3 py-1.5 text-xs font-medium transition-all rounded-md ${
                   viewMode === 'grid' 
-                    ? 'bg-blue-100 text-blue-700' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-sketch-accent shadow-sm' 
+                    : 'text-sketch-text-muted hover:text-sketch-text hover:bg-white/50'
                 }`}
+                style={viewMode === 'grid' ? { color: '#ffffff', backgroundColor: '#262626' } : {}}
               >
                 Grid
               </button>
               <button
+                type="button"
                 onClick={() => setViewMode('list')}
-                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                className={`px-3 py-1.5 text-xs font-medium transition-all rounded-md ${
                   viewMode === 'list' 
-                    ? 'bg-blue-100 text-blue-700' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-sketch-accent shadow-sm' 
+                    : 'text-sketch-text-muted hover:text-sketch-text hover:bg-white/50'
                 }`}
+                style={viewMode === 'list' ? { color: '#ffffff', backgroundColor: '#262626' } : {}}
               >
                 List
               </button>
@@ -424,6 +480,13 @@ export function ScriptsClient({ scripts, userName }: ScriptsClientProps) {
                     >
                       📄 PDF
                     </button>
+                    <button 
+                      onClick={() => handleDeleteScript(script)}
+                      disabled={deletingScript === script.id}
+                      className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {deletingScript === script.id ? '⏳' : '🗑️'} {deletingScript === script.id ? 'Deleting...' : 'Delete'}
+                    </button>
                   </>
                 )}
                 <a
@@ -463,6 +526,42 @@ export function ScriptsClient({ scripts, userName }: ScriptsClientProps) {
           </div>
         </div>
       )}
+
+      {/* Dialogs */}
+      <ConfirmationDialog
+        isOpen={showErrorDialog}
+        onClose={() => setShowErrorDialog(false)}
+        onConfirm={() => {}}
+        title="Error"
+        message={dialogMessage}
+        confirmLabel="OK"
+        cancelLabel=""
+        variant="destructive"
+      />
+
+      <ConfirmationDialog
+        isOpen={showSuccessDialog}
+        onClose={() => setShowSuccessDialog(false)}
+        onConfirm={() => {}}
+        title="Success"
+        message={dialogMessage}
+        confirmLabel="OK"
+        cancelLabel=""
+      />
+
+      <ConfirmationDialog
+        isOpen={showDeleteDialog}
+        onClose={() => {
+          setShowDeleteDialog(false);
+          setScriptToDelete(null);
+        }}
+        onConfirm={confirmDeleteScript}
+        title="Delete Script"
+        message={`Are you sure you want to delete the script "${scriptToDelete?.title}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="destructive"
+      />
     </div>
   );
 }

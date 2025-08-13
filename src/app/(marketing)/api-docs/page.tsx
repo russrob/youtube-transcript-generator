@@ -120,7 +120,7 @@ export default function ApiDocsPage() {
                 <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium mr-3">
                   GET
                 </span>
-                <code className="text-lg font-mono text-gray-900">/v1/scripts/{id}</code>
+                <code className="text-lg font-mono text-gray-900">/v1/scripts/{'{id}'}</code>
               </div>
               <p className="text-gray-700 mb-4">Retrieve a specific script by ID</p>
               

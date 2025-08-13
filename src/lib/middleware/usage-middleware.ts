@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
-import { checkUsageLimit, recordScriptUsage } from '@/lib/subscription/subscription-service';
+import { checkUsageLimit, recordScriptUsage, getEffectiveSubscriptionTier, getUserSubscription, getSubscriptionLimits } from '@/lib/subscription/subscription-service';
 
 export interface UsageCheckResult {
   allowed: boolean;
@@ -15,6 +15,7 @@ export interface UsageCheckResult {
 
 /**
  * Middleware to check usage limits before script generation
+ * Now includes master admin detection for unlimited access
  */
 export async function checkUsageLimitMiddleware(): Promise<UsageCheckResult> {
   try {
@@ -27,6 +28,32 @@ export async function checkUsageLimitMiddleware(): Promise<UsageCheckResult> {
       };
     }
 
+    // Get user subscription and check effective tier (includes master admin)
+    const subscription = await getUserSubscription(user.id);
+    const userEmail = user.emailAddresses[0]?.emailAddress || '';
+    
+    const effectiveTier = getEffectiveSubscriptionTier(
+      subscription.tier,
+      userEmail,
+      user.id
+    );
+    
+    const limits = getSubscriptionLimits(effectiveTier);
+    
+    // If user has unlimited scripts (ENTERPRISE tier), always allow
+    if (limits.monthlyScripts === -1) {
+      return {
+        allowed: true,
+        usage: {
+          used: subscription.usage.used,
+          limit: -1,
+          remaining: -1,
+          resetDate: subscription.usage.resetDate
+        }
+      };
+    }
+
+    // For limited tiers, use normal usage checking
     const usageInfo = await checkUsageLimit(user.id);
     
     if (!usageInfo.canGenerate) {
@@ -111,6 +138,7 @@ export async function withUsageLimit<T>(
 
 /**
  * Get user's current usage status (for UI display)
+ * Now includes master admin detection for unlimited access
  */
 export async function getUserUsageStatus() {
   try {
@@ -120,6 +148,31 @@ export async function getUserUsageStatus() {
       return null;
     }
 
+    // Get user subscription and check effective tier (includes master admin)
+    const subscription = await getUserSubscription(user.id);
+    const userEmail = user.emailAddresses[0]?.emailAddress || '';
+    
+    const effectiveTier = getEffectiveSubscriptionTier(
+      subscription.tier,
+      userEmail,
+      user.id
+    );
+    
+    const limits = getSubscriptionLimits(effectiveTier);
+    
+    // If user has unlimited scripts (ENTERPRISE tier), return unlimited status
+    if (limits.monthlyScripts === -1) {
+      return {
+        used: subscription.usage.used,
+        limit: -1,
+        remaining: -1,
+        resetDate: subscription.usage.resetDate,
+        canGenerate: true,
+        isUnlimited: true
+      };
+    }
+
+    // For limited tiers, use normal usage checking
     const usageInfo = await checkUsageLimit(user.id);
     
     return {

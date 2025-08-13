@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { SubscriptionTier } from '@prisma/client';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 
 interface UpgradeButtonProps {
   targetTier: SubscriptionTier;
@@ -25,6 +26,9 @@ export function UpgradeButton({
   children 
 }: UpgradeButtonProps) {
   const [loading, setLoading] = useState(false);
+  const [showNotConfiguredDialog, setShowNotConfiguredDialog] = useState(false);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleUpgrade = async () => {
     if (isCurrentTier || targetTier === 'FREE') return;
@@ -35,7 +39,7 @@ export function UpgradeButton({
       const priceId = STRIPE_PRICE_IDS[targetTier];
       
       if (!priceId || priceId.includes('placeholder')) {
-        alert('Stripe is not fully configured yet. This is a demo.');
+        setShowNotConfiguredDialog(true);
         setLoading(false);
         return;
       }
@@ -64,7 +68,8 @@ export function UpgradeButton({
       }
     } catch (error: any) {
       console.error('Upgrade error:', error);
-      alert('Failed to start upgrade process. Please try again.');
+      setErrorMessage('Failed to start upgrade process. Please try again.');
+      setShowErrorDialog(true);
     } finally {
       setLoading(false);
     }
@@ -72,19 +77,65 @@ export function UpgradeButton({
 
   if (isCurrentTier) {
     return (
-      <button className={className} disabled>
-        {children}
-      </button>
+      <>
+        <button className={className} disabled>
+          {children}
+        </button>
+
+        <ConfirmationDialog
+          isOpen={showNotConfiguredDialog}
+          onClose={() => setShowNotConfiguredDialog(false)}
+          onConfirm={() => {}}
+          title="Demo Mode"
+          message="Stripe is not fully configured yet. This is a demo."
+          confirmLabel="OK"
+          cancelLabel=""
+        />
+
+        <ConfirmationDialog
+          isOpen={showErrorDialog}
+          onClose={() => setShowErrorDialog(false)}
+          onConfirm={() => {}}
+          title="Upgrade Error"
+          message={errorMessage}
+          confirmLabel="OK"
+          cancelLabel=""
+          variant="destructive"
+        />
+      </>
     );
   }
 
   return (
-    <button
-      onClick={handleUpgrade}
-      disabled={loading}
-      className={className}
-    >
-      {loading ? 'Loading...' : children}
-    </button>
+    <>
+      <button
+        onClick={handleUpgrade}
+        disabled={loading}
+        className={className}
+      >
+        {loading ? 'Loading...' : children}
+      </button>
+
+      <ConfirmationDialog
+        isOpen={showNotConfiguredDialog}
+        onClose={() => setShowNotConfiguredDialog(false)}
+        onConfirm={() => {}}
+        title="Demo Mode"
+        message="Stripe is not fully configured yet. This is a demo."
+        confirmLabel="OK"
+        cancelLabel=""
+      />
+
+      <ConfirmationDialog
+        isOpen={showErrorDialog}
+        onClose={() => setShowErrorDialog(false)}
+        onConfirm={() => {}}
+        title="Upgrade Error"
+        message={errorMessage}
+        confirmLabel="OK"
+        cancelLabel=""
+        variant="destructive"
+      />
+    </>
   );
 }

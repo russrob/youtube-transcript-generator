@@ -45,6 +45,21 @@ export interface ThumbnailPremise {
   contrast_type: 'before_after' | 'a_b_comparison' | 'problem_solution' | 'curiosity';
 }
 
+export interface PayoffScenario {
+  id: string;
+  type: 'unexpected_reveal' | 'action_plan' | 'transformation_story' | 'cliffhanger' | 'call_to_action';
+  title: string;
+  description: string;
+  content: string;
+  reasoning: string;
+}
+
+export interface RemixVariations {
+  hookVariations: Hook[];
+  titleVariations: TitleSuggestion[];
+  payoffScenarios: PayoffScenario[];
+}
+
 export interface GeneratedScript {
   title: string;
   content: string;
@@ -57,6 +72,8 @@ export interface GeneratedScript {
   thumbnailPremises?: ThumbnailPremise[];
   clickConfirmation?: string;
   payoutMoments?: string[];
+  // Remix variations
+  remixVariations?: RemixVariations;
 }
 
 export interface ScriptSection {
@@ -340,16 +357,20 @@ function getStyleInstructions(style: ScriptStyle): string {
  * Gets audience-specific instructions
  */
 function getAudienceInstructions(audience: string): string {
+  const audienceKey = audience.toLowerCase().replace(/\s+/g, '_');
+  
   const commonAudiences: Record<string, string> = {
-    'general': 'General audience with no assumed prior knowledge',
-    'beginners': 'Complete beginners who need basic concepts explained clearly',
-    'intermediate': 'Some background knowledge, can handle moderate complexity', 
-    'experts': 'Advanced audience who appreciates technical depth and nuance',
-    'students': 'Educational focus with clear learning objectives and examples',
-    'professionals': 'Business context with practical applications and outcomes'
+    'general': 'General audience with no assumed prior knowledge. Use accessible language, avoid jargon, and provide relatable examples. Focus on universal benefits and outcomes.',
+    'beginners': 'Complete beginners who need basic concepts explained clearly. Use simple analogies, step-by-step approaches, and avoid intimidating technical terms. Build confidence through achievable wins.',
+    'professionals': 'Working professionals in the industry. Use business-focused language, emphasize ROI and practical applications. Include industry-specific examples and measurable outcomes.',
+    'students': 'Educational focus with clear learning objectives. Structure content with clear takeaways, use academic language appropriately, and provide practical exercises or assignments.',
+    'experts': 'Advanced practitioners who appreciate technical depth and nuance. Use precise terminology, discuss advanced concepts, and provide cutting-edge insights.',
+    'entrepreneurs': 'Business owners and startup founders. Focus on growth, scaling, innovation, and competitive advantage. Use business metrics, case studies, and actionable strategies.',
+    'content_creators': 'YouTubers, bloggers, and content producers. Emphasize audience growth, monetization, creative processes, and platform-specific strategies. Use creator economy language.',
+    'small_business': 'Small business owners and operators. Focus on practical, cost-effective solutions. Emphasize local impact, community building, and manageable growth strategies.'
   };
   
-  return commonAudiences[audience.toLowerCase()] || `Tailored for ${audience} audience`;
+  return commonAudiences[audienceKey] || `Tailored for ${audience} audience with specialized language, examples, and approach suitable for this specific group.`;
 }
 
 /**
@@ -427,6 +448,390 @@ function isValidGeneratedScript(script: any): script is GeneratedScript {
       typeof thumb.contrast_type === 'string'
     );
     if (!thumbnailsValid) return false;
+  }
+
+  return true;
+}
+
+/**
+ * Generates remix variations for an existing script
+ */
+export async function generateRemixVariations(
+  originalScript: GeneratedScript,
+  videoTitle: string,
+  targetAudience: string,
+  selectedHook?: string,
+  customInstructions?: string
+): Promise<{ success: true; variations: RemixVariations } | { success: false; error: ScriptGenerationError }> {
+  try {
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    if (!process.env.OPENAI_API_KEY) {
+      return {
+        success: false,
+        error: {
+          code: 'API_ERROR',
+          message: 'OpenAI API key not configured'
+        }
+      };
+    }
+
+    const prompt = buildRemixVariationsPrompt(originalScript, videoTitle, targetAudience, selectedHook, customInstructions);
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [
+        {
+          role: "system",
+          content: "You are a YouTube Script Remix Expert specializing in creating multiple compelling variations. Always respond with valid JSON in the exact format requested."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      max_tokens: 3000,
+      temperature: 0.8, // Higher creativity for variations
+    });
+
+    const response = completion.choices[0]?.message?.content;
+    if (!response) {
+      return {
+        success: false,
+        error: {
+          code: 'API_ERROR',
+          message: 'No response received from OpenAI'
+        }
+      };
+    }
+
+    let parsedVariations: RemixVariations;
+    try {
+      parsedVariations = JSON.parse(response);
+    } catch (parseError) {
+      return {
+        success: false,
+        error: {
+          code: 'API_ERROR',
+          message: 'Failed to parse AI response as JSON'
+        }
+      };
+    }
+
+    // Validate structure
+    if (!isValidRemixVariations(parsedVariations)) {
+      return {
+        success: false,
+        error: {
+          code: 'API_ERROR',
+          message: 'AI response does not match expected remix variations format'
+        }
+      };
+    }
+
+    return {
+      success: true,
+      variations: parsedVariations
+    };
+
+  } catch (error: any) {
+    return {
+      success: false,
+      error: {
+        code: 'API_ERROR',
+        message: `Unexpected error: ${error.message}`
+      }
+    };
+  }
+}
+
+/**
+ * Builds the prompt for remix variations generation
+ */
+function buildRemixVariationsPrompt(
+  originalScript: GeneratedScript,
+  videoTitle: string,
+  targetAudience: string,
+  selectedHook?: string,
+  customInstructions?: string
+): string {
+  const hookSection = selectedHook 
+    ? `\n\n**SELECTED HOOK PREFERENCE:**\n"${selectedHook}"\nUse this as inspiration for hook variations but create 3 distinct alternatives.`
+    : '';
+
+  const audienceInstructions = getAudienceInstructions(targetAudience);
+  const audienceSection = `\n\n**TARGET AUDIENCE:** ${targetAudience}\n${audienceInstructions}\nAll variations must be tailored specifically for this audience.`;
+
+  const customSection = customInstructions 
+    ? `\n\n**CUSTOM INSTRUCTIONS:** ${customInstructions}`
+    : '';
+
+  return `You are a YouTube Script Remix Expert. Create 3 distinct variations each for HOOKS, TITLES, and PAYOFF SCENARIOS based on this original script.
+
+**ORIGINAL SCRIPT CONTEXT:**
+Video Title: ${videoTitle}
+Original Script Title: ${originalScript.title}
+Script Content: ${originalScript.content.substring(0, 1500)}...
+Style: Professional, high-retention YouTube content
+Duration: ${originalScript.estimatedDuration} minutes
+${audienceSection}${hookSection}${customSection}
+
+**TASK:** Generate exactly 3 variations each for:
+1. **Hook Variations** - Different opening approaches to grab attention
+2. **Title Variations** - Alternative compelling titles for the script
+3. **Payoff Scenarios** - Different ways to deliver value and conclude
+
+**REMIX VARIATION REQUIREMENTS:**
+
+**HOOK VARIATIONS (3 required):**
+- Each hook should be 15-30 seconds when spoken
+- Different psychological approaches: question, bold statement, curiosity gap
+- Maintain click confirmation but with unique angles
+- Each should feel distinctly different in approach
+
+**TITLE VARIATIONS (3 required):**
+- Under 60 characters for mobile optimization
+- Different emotional triggers: curiosity, urgency, benefit
+- Score each for clickability (7.0-10.0)
+- Avoid direct copies of original title
+
+**PAYOFF SCENARIOS (3 required):**
+- Different conclusion approaches: reveal, action plan, transformation story
+- Each should provide clear value delivery
+- Different emotional endings: satisfaction, motivation, intrigue
+- 30-60 seconds of content each
+
+**RESPONSE FORMAT (JSON):**
+{
+  "hookVariations": [
+    {
+      "id": "hook_var_1",
+      "type": "question|context|bold_statement|curiosity_gap",
+      "content": "Complete hook content (15-30 seconds spoken)",
+      "reasoning": "Why this hook works and how it differs from others"
+    }
+  ],
+  "titleVariations": [
+    {
+      "title": "Compelling alternative title under 60 chars",
+      "reasoning": "Psychological trigger and appeal explanation",
+      "clickability_score": 8.7
+    }
+  ],
+  "payoffScenarios": [
+    {
+      "id": "payoff_1",
+      "type": "unexpected_reveal|action_plan|transformation_story|cliffhanger|call_to_action",
+      "title": "Scenario name (5-8 words)",
+      "description": "Brief description of this payoff approach",
+      "content": "Complete payoff content (30-60 seconds spoken)",
+      "reasoning": "Why this ending works for retention and satisfaction"
+    }
+  ]
+}
+
+**VARIATION STRATEGY:**
+- Hook 1: Question-based curiosity opener
+- Hook 2: Bold statement with immediate value promise  
+- Hook 3: Context setup with compelling storyline
+
+- Title 1: Curiosity-driven with numbers/specifics
+- Title 2: Benefit-focused with emotional appeal
+- Title 3: Urgency/scarcity with action orientation
+
+- Payoff 1: Unexpected reveal with "aha" moment
+- Payoff 2: Practical action plan with next steps
+- Payoff 3: Transformation story with emotional satisfaction
+
+Generate exactly 3 of each type. Each variation should feel meaningfully different while maintaining quality and retention focus.`;
+}
+
+/**
+ * Generates final remix script with selected variations
+ */
+export async function generateFinalRemixScript(
+  originalScript: GeneratedScript,
+  selections: {
+    hook: Hook;
+    title: TitleSuggestion;
+    payoff: PayoffScenario;
+    targetAudience: string;
+    customInstructions?: string;
+  }
+): Promise<{ success: true; script: GeneratedScript } | { success: false; error: ScriptGenerationError }> {
+  try {
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    if (!process.env.OPENAI_API_KEY) {
+      return {
+        success: false,
+        error: {
+          code: 'API_ERROR',
+          message: 'OpenAI API key not configured'
+        }
+      };
+    }
+
+    const audienceInstructions = getAudienceInstructions(selections.targetAudience);
+    const customSection = selections.customInstructions 
+      ? `\n\n**CUSTOM INSTRUCTIONS:** ${selections.customInstructions}`
+      : '';
+
+    const prompt = `You are a YouTube Script Architect creating a final remix script using selected variations.
+
+**ORIGINAL SCRIPT:**
+Title: ${originalScript.title}
+Content: ${originalScript.content}
+Duration: ${originalScript.estimatedDuration} minutes
+
+**SELECTED VARIATIONS:**
+Hook: ${selections.hook.content}
+Title: ${selections.title.title}
+Payoff: ${selections.payoff.content}
+
+**TARGET AUDIENCE:** ${selections.targetAudience}
+${audienceInstructions}
+${customSection}
+
+**TASK:** Create a complete remix script that integrates:
+1. The selected hook as the opening (maintain its style and approach)
+2. The selected title as the script title
+3. The selected payoff scenario as the conclusion
+4. Content tailored specifically for the target audience
+5. Smooth transitions between original content and new variations
+
+**REQUIREMENTS:**
+- Maintain the original script's core message and value
+- Seamlessly integrate the selected hook, title, and payoff
+- Adapt language, examples, and references for the target audience
+- Ensure smooth flow between all sections
+- Keep the same estimated duration as original (${originalScript.estimatedDuration} minutes)
+
+**RESPONSE FORMAT (JSON):**
+{
+  "title": "${selections.title.title}",
+  "content": "Complete remixed script with selected variations integrated",
+  "estimatedDuration": ${originalScript.estimatedDuration},
+  "wordCount": 0,
+  "sections": [
+    {
+      "title": "Hook",
+      "content": "Selected hook content with smooth transition",
+      "estimatedDuration": 0.5,
+      "type": "intro"
+    },
+    {
+      "title": "Main Content",
+      "content": "Adapted main content for target audience",
+      "estimatedDuration": ${originalScript.estimatedDuration - 1.0},
+      "type": "main"  
+    },
+    {
+      "title": "Payoff",
+      "content": "Selected payoff scenario content",
+      "estimatedDuration": 0.5,
+      "type": "conclusion"
+    }
+  ],
+  "clickConfirmation": "Opening lines that confirm the title promise for target audience",
+  "payoutMoments": ["Key insight 1 for audience", "Key insight 2 for audience", "Key insight 3 for audience"]
+}
+
+Create a cohesive, audience-tailored script that feels natural and engaging while incorporating all selected variations.`;
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [
+        {
+          role: "system",
+          content: "You are a YouTube Script Architect who creates cohesive, engaging scripts. Always respond with valid JSON in the exact format requested."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      max_tokens: 4000,
+      temperature: 0.7,
+    });
+
+    const response = completion.choices[0]?.message?.content;
+    if (!response) {
+      return {
+        success: false,
+        error: {
+          code: 'API_ERROR',
+          message: 'No response received from OpenAI'
+        }
+      };
+    }
+
+    let parsedScript: GeneratedScript;
+    try {
+      parsedScript = JSON.parse(response);
+    } catch (parseError) {
+      return {
+        success: false,
+        error: {
+          code: 'API_ERROR',
+          message: 'Failed to parse AI response as JSON'
+        }
+      };
+    }
+
+    // Validate structure
+    if (!isValidGeneratedScript(parsedScript)) {
+      return {
+        success: false,
+        error: {
+          code: 'API_ERROR',
+          message: 'AI response does not match expected script format'
+        }
+      };
+    }
+
+    return {
+      success: true,
+      script: parsedScript
+    };
+
+  } catch (error: any) {
+    return {
+      success: false,
+      error: {
+        code: 'API_ERROR',
+        message: `Unexpected error: ${error.message}`
+      }
+    };
+  }
+}
+
+/**
+ * Validates remix variations structure
+ */
+function isValidRemixVariations(variations: any): variations is RemixVariations {
+  if (!variations || typeof variations !== 'object') return false;
+
+  // Validate hook variations
+  if (!Array.isArray(variations.hookVariations) || variations.hookVariations.length !== 3) return false;
+  for (const hook of variations.hookVariations) {
+    if (!hook.id || !hook.type || !hook.content || !hook.reasoning) return false;
+  }
+
+  // Validate title variations
+  if (!Array.isArray(variations.titleVariations) || variations.titleVariations.length !== 3) return false;
+  for (const title of variations.titleVariations) {
+    if (!title.title || !title.reasoning || typeof title.clickability_score !== 'number') return false;
+  }
+
+  // Validate payoff scenarios
+  if (!Array.isArray(variations.payoffScenarios) || variations.payoffScenarios.length !== 3) return false;
+  for (const payoff of variations.payoffScenarios) {
+    if (!payoff.id || !payoff.type || !payoff.title || !payoff.description || !payoff.content || !payoff.reasoning) return false;
   }
 
   return true;

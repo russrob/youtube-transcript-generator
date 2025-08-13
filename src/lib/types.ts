@@ -62,6 +62,10 @@ export enum ScriptStyle {
   ENTERTAINING = "ENTERTAINING",
   TECHNICAL = "TECHNICAL",
   STORYTELLING = "STORYTELLING",
+  // Pro-only styles
+  PERSUASIVE = "PERSUASIVE",
+  NARRATIVE = "NARRATIVE",
+  ACADEMIC = "ACADEMIC",
 }
 
 export enum ScriptStatus {

@@ -41,16 +41,16 @@ export function UsageLimits({ usage, tier, className = '' }: UsageLimitsProps) {
   };
 
   return (
-    <div className={`bg-white rounded-lg border border-gray-200 p-4 ${className}`}>
+    <div className={`bg-white rounded-sketch-md border border-sketch-border p-sketch-6 shadow-sketch-soft ${className}`}>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-2">
-          <h3 className="text-sm font-medium text-gray-900">Usage This Month</h3>
-          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800`}>
+          <h3 className="text-sketch-small font-medium text-sketch-text">Usage This Month</h3>
+          <span className={`inline-flex items-center px-sketch-3 py-sketch-1 rounded-full text-sketch-small font-medium bg-sketch-surface text-sketch-text border border-sketch-border`}>
             {formatTier(tier)}
           </span>
         </div>
         {!canGenerate && (
-          <span className="text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded-full">
+          <span className="text-xs font-semibold text-red-600 bg-red-50 px-sketch-3 py-sketch-1 rounded-full border border-red-200">
             Limit Reached
           </span>
         )}
@@ -59,7 +59,7 @@ export function UsageLimits({ usage, tier, className = '' }: UsageLimitsProps) {
       {!isUnlimited ? (
         <>
           {/* Progress Bar */}
-          <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+          <div className="w-full bg-sketch-surface rounded-full h-2 mb-sketch-4 border border-sketch-border">
             <div 
               className={`h-2 rounded-full transition-all duration-300 ${getProgressBarColor()}`}
               style={{ width: `${Math.min(progressPercent, 100)}%` }}
@@ -67,11 +67,11 @@ export function UsageLimits({ usage, tier, className = '' }: UsageLimitsProps) {
           </div>
 
           {/* Usage Stats */}
-          <div className="flex justify-between text-sm">
-            <span className={`font-medium ${getStatusColor()}`}>
+          <div className="flex justify-between text-sketch-small">
+            <span className={`font-semibold ${getStatusColor()}`}>
               {used} of {limit} scripts used
             </span>
-            <span className="text-gray-500">
+            <span className="text-sketch-text-muted font-medium">
               {remaining} remaining
             </span>
           </div>
@@ -81,15 +81,15 @@ export function UsageLimits({ usage, tier, className = '' }: UsageLimitsProps) {
           <span className="text-purple-600 font-medium text-sm">
             ✨ Unlimited Scripts
           </span>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-sketch-small text-sketch-text-muted mt-1">
             {used} scripts generated this month
           </p>
         </div>
       )}
 
       {/* Reset Date */}
-      <div className="mt-3 pt-3 border-t border-gray-100">
-        <p className="text-xs text-gray-500">
+      <div className="mt-sketch-3 pt-sketch-3 border-t border-sketch-border">
+        <p className="text-sketch-small text-sketch-text-muted">
           Usage resets on {resetDate.toLocaleDateString('en-US', { 
             month: 'short', 
             day: 'numeric' 
@@ -99,8 +99,8 @@ export function UsageLimits({ usage, tier, className = '' }: UsageLimitsProps) {
 
       {/* Upgrade CTA for low limits */}
       {tier === SubscriptionTier.FREE && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
-          <button className="w-full text-center text-xs text-blue-600 hover:text-blue-800 font-medium">
+        <div className="mt-sketch-3 pt-sketch-3 border-t border-sketch-border">
+          <button className="w-full text-center text-sketch-small text-blue-600 hover:text-blue-800 font-medium">
             Upgrade to Pro for 50 scripts/month →
           </button>
         </div>
