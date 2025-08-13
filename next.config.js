@@ -48,24 +48,11 @@ const nextConfig = {
             key: 'Strict-Transport-Security',
             value: 'max-age=31536000; includeSubDomains; preload'
           }] : []),
-          // Content Security Policy - with custom Clerk domain
-          {
-            key: 'Content-Security-Policy',
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://clerk.accounts.dev https://*.clerk.accounts.dev https://clerk.scriptforgeai.co https://*.google.com https://*.gstatic.com https://*.recaptcha.net",
-              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
-              "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: https: https://www.google.com https://www.gstatic.com",
-              "connect-src 'self' https://api.openai.com https://api.stripe.com https://clerk.accounts.dev https://*.clerk.accounts.dev https://clerk.scriptforgeai.co https://*.supabase.co https://*.sentry.io https://*.google.com https://*.googleapis.com https://*.recaptcha.net",
-              "frame-src https://js.stripe.com https://hooks.stripe.com https://*.google.com https://*.recaptcha.net",
-              "object-src 'none'",
-              "base-uri 'self'",
-              "form-action 'self'",
-              "frame-ancestors 'none'",
-              "upgrade-insecure-requests"
-            ].join('; ')
-          }
+          // Content Security Policy - moved to vercel.json
+          // {
+          //   key: 'Content-Security-Policy',
+          //   value: "CSP configuration moved to vercel.json"
+          // }
         ]
       }
     ]
