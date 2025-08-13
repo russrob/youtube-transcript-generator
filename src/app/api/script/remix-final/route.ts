@@ -284,11 +284,9 @@ export async function POST(request: NextRequest) {
       });
 
       // Record usage
-      await recordUsageMiddleware(user.id, {
+      await recordUsageMiddleware({
         scriptId: completedScript.id,
-        processingTimeMs,
-        isRemix: true,
-        isFinalRemix: true
+        processingTimeMs
       });
 
       return NextResponse.json({

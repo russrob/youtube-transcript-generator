@@ -87,6 +87,13 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
 
   // Get customer to find user ID
   const customer = await stripe.customers.retrieve(customerId);
+  
+  // Check if customer is deleted or doesn't have metadata
+  if (!customer || customer.deleted || !('metadata' in customer)) {
+    console.error('Customer not found, deleted, or missing metadata');
+    return;
+  }
+  
   const userId = customer.metadata?.userId;
   
   if (!userId) {
@@ -119,6 +126,13 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   }
 
   const customer = await stripe.customers.retrieve(customerId);
+  
+  // Check if customer is deleted or doesn't have metadata
+  if (!customer || customer.deleted || !('metadata' in customer)) {
+    console.error('Customer not found, deleted, or missing metadata');
+    return;
+  }
+  
   const userId = customer.metadata?.userId;
   
   if (!userId) {
@@ -144,6 +158,13 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   const customerId = subscription.customer as string;
   const customer = await stripe.customers.retrieve(customerId);
+  
+  // Check if customer is deleted or doesn't have metadata
+  if (!customer || customer.deleted || !('metadata' in customer)) {
+    console.error('Customer not found, deleted, or missing metadata');
+    return;
+  }
+  
   const userId = customer.metadata?.userId;
   
   if (!userId) {

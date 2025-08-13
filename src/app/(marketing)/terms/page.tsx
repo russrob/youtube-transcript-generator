@@ -91,8 +91,8 @@ export default function TermsPage() {
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">Contact Information</h2>
           <p className="text-gray-700">
             For questions about these Terms of Service, please contact us at{' '}
-            <a href="mailto:legal@scriptforge.ai" className="text-blue-600 hover:text-blue-800">
-              legal@scriptforge.ai
+            <a href="mailto:legal@scriptforgeai.co" className="text-blue-600 hover:text-blue-800">
+              legal@scriptforgeai.co
             </a>
           </p>
         </section>

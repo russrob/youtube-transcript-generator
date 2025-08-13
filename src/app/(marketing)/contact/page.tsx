@@ -116,8 +116,8 @@ export default function ContactPage() {
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-gray-900">Email Support</h3>
                   <p className="text-gray-600 mt-1">
-                    <a href="mailto:support@scriptforge.ai" className="text-blue-600 hover:text-blue-800">
-                      support@scriptforge.ai
+                    <a href="mailto:support@scriptforgeai.co" className="text-blue-600 hover:text-blue-800">
+                      support@scriptforgeai.co
                     </a>
                   </p>
                   <p className="text-sm text-gray-500 mt-1">We typically respond within 24 hours</p>
@@ -142,8 +142,8 @@ export default function ContactPage() {
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-gray-900">Enterprise Sales</h3>
                   <p className="text-gray-600 mt-1">
-                    <a href="mailto:enterprise@scriptforge.ai" className="text-blue-600 hover:text-blue-800">
-                      enterprise@scriptforge.ai
+                    <a href="mailto:enterprise@scriptforgeai.co" className="text-blue-600 hover:text-blue-800">
+                      enterprise@scriptforgeai.co
                     </a>
                   </p>
                   <p className="text-sm text-gray-500 mt-1">For teams and large organizations</p>

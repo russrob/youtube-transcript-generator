@@ -92,13 +92,13 @@ export async function checkUsageLimitMiddleware(): Promise<UsageCheckResult> {
  * Record usage after successful script generation
  */
 export async function recordUsageMiddleware(
-  metadata?: { scriptId?: string; processingTimeMs?: number }
+  options: { scriptId?: string; processingTimeMs?: number }
 ): Promise<void> {
   try {
     const user = await currentUser();
     
     if (user?.id) {
-      await recordScriptUsage(user.id, metadata);
+      await recordScriptUsage(user.id, options);
     }
   } catch (error) {
     console.error('Failed to record usage:', error);

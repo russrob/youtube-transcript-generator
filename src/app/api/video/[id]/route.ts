@@ -1,17 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-interface RouteParams {
-  params: {
-    id: string;
-  };
-}
-
 export async function GET(
   request: NextRequest,
-  { params }: RouteParams
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params;
     const { id } = params;
 
     if (!id) {
@@ -140,9 +135,10 @@ export async function GET(
 // Handle DELETE request to remove a video
 export async function DELETE(
   request: NextRequest,
-  { params }: RouteParams
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params;
     const { id } = params;
 
     if (!id) {
@@ -156,6 +152,7 @@ export async function DELETE(
     const video = await prisma.video.findUnique({
       where: { id },
       include: {
+        transcript: true,
         _count: {
           select: {
             scripts: true
@@ -201,9 +198,10 @@ export async function DELETE(
 // Handle PATCH request to update video metadata
 export async function PATCH(
   request: NextRequest,
-  { params }: RouteParams
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params;
     const { id } = params;
     const body = await request.json();
 

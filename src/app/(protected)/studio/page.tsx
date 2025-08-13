@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { useUser } from '@clerk/nextjs';
 import { LoadingPage } from '@/components/ui/LoadingSpinner';
 import type { Video, Transcript, Script, TranscriptFetchResponse, ScriptStyle } from "@/lib/types";
-import type { SubscriptionLimits, Hook, TitleSuggestion, ThumbnailPremise } from "@/lib/subscription/subscription-service";
+import type { SubscriptionLimits, TitleSuggestion, ThumbnailPremise } from "@/lib/subscription/subscription-service";
+import type { HookRow } from "@/types/hooks";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { Button } from '@/components/ui/button';
@@ -54,7 +55,7 @@ export default function StudioPage() {
 
   // Enhanced results state
   const [enhancedResults, setEnhancedResults] = useState<{
-    hooks: Hook[];
+    hooks: HookRow[];
     titlePack: TitleSuggestion[];
     thumbnailPremises: ThumbnailPremise[];
     clickConfirmation: string;
@@ -62,7 +63,7 @@ export default function StudioPage() {
   } | null>(null);
 
   // Remix state management
-  const [selectedHook, setSelectedHook] = useState<Hook | null>(null);
+  const [selectedHook, setSelectedHook] = useState<HookRow | null>(null);
   const [selectedPayoutMoments, setSelectedPayoutMoments] = useState<string[]>([]);
   const [remixKeyPoints, setRemixKeyPoints] = useState<string>("");
   const [showRemixModal, setShowRemixModal] = useState(false);
@@ -241,7 +242,7 @@ export default function StudioPage() {
 
     try {
       // Use enhanced API endpoint
-      const requestBody = {
+      const requestBody: any = {
         videoId: currentVideo.id,
         style: scriptStyle,
         durationMin: duration,
@@ -1092,10 +1093,10 @@ export default function StudioPage() {
                                     />
                                   )}
                                   <div className="text-sm font-medium text-yellow-800 uppercase tracking-wide">
-                                    {hook.type.replace('_', ' ')}
+                                    Hook #{hook.id}
                                   </div>
-                                  <div className="text-gray-900 mt-1 font-medium">{hook.content}</div>
-                                  <div className="text-xs text-gray-600 mt-2">{hook.reasoning}</div>
+                                  <div className="text-gray-900 mt-1 font-medium">{hook.hook}</div>
+                                  <div className="text-xs text-gray-600 mt-2">Styles: {hook.styles.join(', ')}</div>
                                 </div>
                               ))}
                             </div>
@@ -1128,13 +1129,13 @@ export default function StudioPage() {
                               {enhancedResults.thumbnailPremises.map((thumb, idx) => (
                                 <div key={idx} className="bg-purple-50 border border-purple-200 p-4 rounded-lg">
                                   <div className="text-sm font-medium text-purple-800 uppercase tracking-wide">
-                                    {thumb.contrast_type.replace('_', ' ')}
+                                    {thumb.contrast_type?.replace('_', ' ') || 'Thumbnail'}
                                   </div>
                                   <div className="text-gray-900 font-medium mt-2">{thumb.concept}</div>
                                   <div className="mt-3">
                                     <div className="text-xs text-gray-600 mb-2">Visual Elements:</div>
                                     <div className="flex flex-wrap gap-1">
-                                      {thumb.visual_elements.map((element, elemIdx) => (
+                                      {thumb.visualElements?.map((element, elemIdx) => (
                                         <span key={elemIdx} className="text-xs bg-white px-2 py-1 rounded-full border">
                                           {element}
                                         </span>
@@ -1324,9 +1325,9 @@ export default function StudioPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Selected Hook:</label>
                   <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg">
                     <div className="text-sm font-medium text-blue-800 uppercase">
-                      {selectedHook.type.replace('_', ' ')}
+                      Selected Hook
                     </div>
-                    <div className="text-gray-900 font-medium">{selectedHook.content}</div>
+                    <div className="text-gray-900 font-medium">{selectedHook.hook}</div>
                   </div>
                 </div>
               )}
@@ -1396,7 +1397,7 @@ export default function StudioPage() {
         variations={remixVariations}
         isGeneratingVariations={isGeneratingVariations}
         isGeneratingFinal={isGeneratingFinalRemix}
-        selectedHook={selectedHook?.content}
+        selectedHook={selectedHook?.hook}
         currentTargetAudience={targetAudience}
       />
     </div>

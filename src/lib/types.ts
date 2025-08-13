@@ -47,6 +47,7 @@ export interface Script {
   options?: Record<string, any>;
   status: ScriptStatus;
   generatedAt?: string;
+  videoId: string;
   video?: Video;
   aiMetrics?: {
     wordCount: number;

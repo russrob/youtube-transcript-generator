@@ -125,8 +125,8 @@ export default function CookiesPage() {
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">Contact Us</h2>
           <p className="text-gray-700">
             If you have any questions about our use of cookies, please contact us at{' '}
-            <a href="mailto:privacy@scriptforge.ai" className="text-blue-600 hover:text-blue-800">
-              privacy@scriptforge.ai
+            <a href="mailto:privacy@scriptforgeai.co" className="text-blue-600 hover:text-blue-800">
+              privacy@scriptforgeai.co
             </a>
           </p>
         </section>

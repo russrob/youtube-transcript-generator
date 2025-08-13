@@ -5,8 +5,9 @@ import { prisma } from '@/lib/prisma';
 // DELETE /api/audiences/[id] - Delete custom audience
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const params = await context.params;
   try {
     // Check authentication
     const user = await currentUser();

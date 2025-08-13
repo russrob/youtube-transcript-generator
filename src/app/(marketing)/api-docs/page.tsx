@@ -64,7 +64,7 @@ export default function ApiDocsPage() {
               All API requests require authentication using an API key in the Authorization header:
             </p>
             <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
-              <div>curl -X POST https://api.scriptforge.ai/v1/scripts/generate \</div>
+              <div>curl -X POST https://api.scriptforgeai.co/v1/scripts/generate \</div>
               <div>  -H "Authorization: Bearer sk_live_YOUR_API_KEY" \</div>
               <div>  -H "Content-Type: application/json"</div>
             </div>
@@ -275,10 +275,10 @@ export default function ApiDocsPage() {
                 Get help integrating our API into your applications.
               </p>
               <a 
-                href="mailto:api-support@scriptforge.ai" 
+                href="mailto:api-support@scriptforgeai.co" 
                 className="text-blue-600 hover:text-blue-800 font-medium"
               >
-                api-support@scriptforge.ai
+                api-support@scriptforgeai.co
               </a>
             </div>
             

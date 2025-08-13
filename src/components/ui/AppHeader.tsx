@@ -60,12 +60,32 @@ export function AppHeader() {
                 <Link 
                   href="/sign-in" 
                   className="text-sketch-text-muted hover:text-sketch-text transition-colors font-medium"
+                  onClick={(e) => {
+                    // Fallback for hydration issues
+                    if (typeof window !== 'undefined' && !e.defaultPrevented) {
+                      setTimeout(() => {
+                        if (window.location.pathname === window.location.pathname) {
+                          window.location.href = '/sign-in';
+                        }
+                      }, 100);
+                    }
+                  }}
                 >
                   Sign in
                 </Link>
                 <Link 
                   href="/sign-up"
                   className="bg-sketch-accent text-white px-sketch-6 py-sketch-3 rounded-xl hover:bg-sketch-accent-600 transition-colors font-medium focus-visible:ring-2 focus-visible:ring-sketch-accent focus-visible:ring-offset-2"
+                  onClick={(e) => {
+                    // Fallback for hydration issues
+                    if (typeof window !== 'undefined' && !e.defaultPrevented) {
+                      setTimeout(() => {
+                        if (window.location.pathname === window.location.pathname) {
+                          window.location.href = '/sign-up';
+                        }
+                      }, 100);
+                    }
+                  }}
                 >
                   Get Started
                 </Link>
@@ -114,14 +134,34 @@ export function AppHeader() {
                     <Link 
                       href="/sign-in" 
                       className="block text-sketch-text-muted hover:text-sketch-text transition-colors px-sketch-2 py-sketch-2 font-medium"
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={(e) => {
+                        setMobileMenuOpen(false);
+                        // Fallback for hydration issues
+                        if (typeof window !== 'undefined' && !e.defaultPrevented) {
+                          setTimeout(() => {
+                            if (window.location.pathname === window.location.pathname) {
+                              window.location.href = '/sign-in';
+                            }
+                          }, 100);
+                        }
+                      }}
                     >
                       Sign in
                     </Link>
                     <Link 
                       href="/sign-up"
                       className="block bg-sketch-accent text-white px-sketch-4 py-sketch-3 rounded-xl hover:bg-sketch-accent-600 transition-colors text-center font-medium"
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={(e) => {
+                        setMobileMenuOpen(false);
+                        // Fallback for hydration issues
+                        if (typeof window !== 'undefined' && !e.defaultPrevented) {
+                          setTimeout(() => {
+                            if (window.location.pathname === window.location.pathname) {
+                              window.location.href = '/sign-up';
+                            }
+                          }, 100);
+                        }
+                      }}
                     >
                       Get Started
                     </Link>

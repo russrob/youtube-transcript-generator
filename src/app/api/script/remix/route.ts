@@ -202,7 +202,7 @@ export async function POST(request: NextRequest) {
       await prisma.script.update({
         where: { id: script.id },
         data: {
-          status: ScriptStatus.FAILED,
+          status: ScriptStatus.ERROR,
           content: `Generation failed: ${generationResult.error.message}`
         }
       });
@@ -228,11 +228,9 @@ export async function POST(request: NextRequest) {
     });
 
     // Record usage
-    await recordUsageMiddleware(user.id, {
+    await recordUsageMiddleware({
       scriptId: updatedScript.id,
-      style: remixOptions.style,
-      processingTimeMs: Date.now() - startTime,
-      isRemix: true
+      processingTimeMs: Date.now() - startTime
     });
 
     return NextResponse.json({

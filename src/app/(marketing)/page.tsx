@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 
 export default function Home() {
@@ -19,7 +21,20 @@ export default function Home() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-              <Link href="/sign-up" className="inline-flex items-center justify-center px-8 py-4 bg-sketch-accent text-white rounded-xl font-medium hover:bg-sketch-accent-600 transition-all duration-200 text-lg">
+              <Link 
+                href="/sign-up" 
+                className="inline-flex items-center justify-center px-8 py-4 bg-sketch-accent text-white rounded-xl font-medium hover:bg-sketch-accent-600 transition-all duration-200 text-lg"
+                onClick={(e) => {
+                  // Fallback for hydration issues
+                  if (typeof window !== 'undefined' && !e.defaultPrevented) {
+                    setTimeout(() => {
+                      if (window.location.pathname === window.location.pathname) {
+                        window.location.href = '/sign-up';
+                      }
+                    }, 100);
+                  }
+                }}
+              >
                 Get started for free
               </Link>
             </div>
@@ -216,7 +231,20 @@ export default function Home() {
             professional scripts in seconds.
           </p>
           
-          <Link href="/sign-up" className="inline-flex items-center justify-center px-8 py-4 bg-sketch-accent text-white rounded-xl font-medium hover:bg-sketch-accent-600 transition-all duration-200 text-lg mb-8">
+          <Link 
+            href="/sign-up" 
+            className="inline-flex items-center justify-center px-8 py-4 bg-sketch-accent text-white rounded-xl font-medium hover:bg-sketch-accent-600 transition-all duration-200 text-lg mb-8"
+            onClick={(e) => {
+              // Fallback for hydration issues
+              if (typeof window !== 'undefined' && !e.defaultPrevented) {
+                setTimeout(() => {
+                  if (window.location.pathname === window.location.pathname) {
+                    window.location.href = '/sign-up';
+                  }
+                }, 100);
+              }
+            }}
+          >
             Get started for free
           </Link>
           

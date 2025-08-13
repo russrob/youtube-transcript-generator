@@ -34,6 +34,22 @@ export interface UsageInfo {
   canGenerate: boolean;
 }
 
+export interface TitleSuggestion {
+  title: string;
+  type: string;
+  appeal: string;
+  clickability_score?: number;
+  reasoning?: string;
+}
+
+export interface ThumbnailPremise {
+  premise: string;
+  visualElements: string[];
+  emotionalTrigger: string;
+  contrast_type?: string;
+  concept?: string;
+}
+
 /**
  * Get subscription limits based on tier
  */

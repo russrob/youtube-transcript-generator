@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
           // Fetch actual YouTube video title
           const videoTitle = await fetchYouTubeTitle(videoId);
           
-          video = await tx.video.create({
+          const newVideo = await tx.video.create({
             data: {
               youtubeId: videoId,
               title: videoTitle,
@@ -136,6 +136,12 @@ export async function POST(request: NextRequest) {
               userId: userId
             }
           });
+          
+          // Create video object with transcript property to match expected type
+          video = {
+            ...newVideo,
+            transcript: null
+          };
         }
 
         // Create transcript record if it doesn't exist

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'ScriptForge AI - Transform YouTube Videos into Professional Scripts',
     description: 'Generate professional scripts from YouTube videos in seconds using AI. Perfect for content creators, marketers, and educators.',
-    url: 'https://scriptforge.ai',
+    url: 'https://scriptforgeai.co',
     siteName: 'ScriptForge AI',
     images: [
       {

@@ -183,7 +183,7 @@ export async function POST(request: NextRequest) {
       await prisma.script.update({
         where: { id: newScript.id },
         data: {
-          status: ScriptStatus.FAILED,
+          status: ScriptStatus.ERROR,
           content: `Generation failed: ${finalRemixResult.error.message}`
         }
       });
@@ -210,11 +210,9 @@ export async function POST(request: NextRequest) {
     });
 
     // Record usage
-    await recordUsageMiddleware(user.id, {
+    await recordUsageMiddleware({
       scriptId: updatedScript.id,
-      style: originalScript.style,
-      processingTimeMs: Date.now() - startTime,
-      isFinalRemix: true
+      processingTimeMs: Date.now() - startTime
     });
 
     return NextResponse.json({

@@ -13,20 +13,7 @@ Sentry.init({
   replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
   
   integrations: [
-    new Sentry.Replay({
-      // Mask all text content, passwords, and emails
-      maskAllText: true,
-      blockAllMedia: true,
-    }),
-    new Sentry.BrowserTracing({
-      // Set sampling rate for performance monitoring
-      tracePropagationTargets: [
-        'localhost',
-        /^https:\/\/yourapp\.vercel\.app/,
-        /^https:\/\/api\.openai\.com/,
-        /^https:\/\/api\.stripe\.com/,
-      ],
-    }),
+    // Sentry.browserTracingIntegration() - Simplified config for build
   ],
   
   // Error filtering for client-side

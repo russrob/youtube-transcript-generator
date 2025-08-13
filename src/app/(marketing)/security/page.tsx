@@ -198,8 +198,8 @@ export default function SecurityPage() {
             <div className="space-y-2">
               <p className="text-yellow-700">
                 <strong>Email:</strong>{' '}
-                <a href="mailto:security@scriptforge.ai" className="text-yellow-800 hover:text-yellow-900">
-                  security@scriptforge.ai
+                <a href="mailto:security@scriptforgeai.co" className="text-yellow-800 hover:text-yellow-900">
+                  security@scriptforgeai.co
                 </a>
               </p>
               <p className="text-yellow-700 text-sm">

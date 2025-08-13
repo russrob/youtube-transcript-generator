@@ -164,10 +164,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Record usage
-    await recordUsageMiddleware(user.id, {
+    await recordUsageMiddleware({
       scriptId: script.id,
-      processingTimeMs: Date.now() - startTime,
-      isRemixVariations: true
+      processingTimeMs: Date.now() - startTime
     });
 
     return NextResponse.json({
