@@ -53,11 +53,11 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://clerk.accounts.dev https://*.clerk.accounts.dev https://www.google.com https://www.gstatic.com https://accounts.google.com https://www.recaptcha.net https://*.google.com https://*.gstatic.com https://recaptcha.net https://*.recaptcha.net",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://clerk.accounts.dev https://*.clerk.accounts.dev https://clerk.scriptforgeai.co https://www.google.com https://www.gstatic.com https://accounts.google.com https://www.recaptcha.net https://*.google.com https://*.gstatic.com https://recaptcha.net https://*.recaptcha.net",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: https: https://www.google.com https://www.gstatic.com",
-              "connect-src 'self' https://api.openai.com https://api.stripe.com https://clerk.accounts.dev https://*.clerk.accounts.dev https://*.supabase.co https://*.sentry.io https://accounts.google.com https://www.googleapis.com https://www.recaptcha.net https://*.google.com https://*.googleapis.com https://recaptcha.net https://*.recaptcha.net",
+              "connect-src 'self' https://api.openai.com https://api.stripe.com https://clerk.accounts.dev https://*.clerk.accounts.dev https://clerk.scriptforgeai.co https://*.supabase.co https://*.sentry.io https://accounts.google.com https://www.googleapis.com https://www.recaptcha.net https://*.google.com https://*.googleapis.com https://recaptcha.net https://*.recaptcha.net",
               "frame-src https://js.stripe.com https://hooks.stripe.com https://accounts.google.com https://www.google.com https://*.google.com https://www.recaptcha.net https://recaptcha.net https://*.recaptcha.net",
               "object-src 'none'",
               "base-uri 'self'",
